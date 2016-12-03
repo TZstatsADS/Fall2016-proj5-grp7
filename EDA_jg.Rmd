@@ -1,0 +1,95 @@
+---
+title: "EDA_NY_taxi"
+author: "Team 7"
+date: "December 3, 2016"
+output:
+  html_notebook: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(plotly)
+library(pbapply)
+library(gbm)
+
+```
+
+```{r}
+date.start <- min(green.smpl.cls.dat$pickup_date)
+date.end <- max(green.smpl.cls.dat$pickup_date)
+```
+
+# Database: Green taxi rides
+
+## General Properties of the Database
+
+Total Rides: `r nrow(green.smpl.cls.dat)`
+
+Date Start: `r date.start`
+
+Date End: `r date.end`
+
+Total Days: `r date.end - date.start + 1`
+
+Detailed Stats:
+
+```{r}
+summary(green.smpl.cls.dat)
+```
+
+
+```{r, fig.width=10, echo=FALSE}
+daily.rides <- green.smpl.cls.dat %>% 
+  group_by(pickup_date) %>%
+  summarise(count.rides = n())
+
+p <- plot_ly(data = daily.rides, 
+             x = ~pickup_date,
+             y = ~count.rides,
+             type = 'scatter',
+             mode = 'lines') %>%
+  layout(title = "Count of rides per day")
+p
+```
+
+* There is regularity in the # of rides per day (weekends have more rides?)
+* For some reason there are less rides around Jan 23rd
+
+
+## Basic association rule
+
+* The following histogram shows the most popular rides.
+* Ride is defined as (origin,destination)
+* The locations are geographically clustered.
+
+```{r, echo=FALSE, fig.width=10}
+# Create a column that combines origin,destination
+
+green.smpl.cls.dat$ride <- paste0(green.smpl.cls.dat$pickup_region,
+                                  '-',
+                                  green.smpl.cls.dat$dropoff_region)
+
+
+histogram.rides <- green.smpl.cls.dat %>% 
+  group_by(ride) %>%
+  summarise(count.rides = n())
+
+histogram.rides <- histogram.rides[order(histogram.rides$count.rides, decreasing = TRUE),]
+histogram.rides$ride <- factor(histogram.rides$ride, levels = histogram.rides$ride)
+
+p <- plot_ly(data = histogram.rides[1:1000,], 
+             x = ~ride,
+             y = ~count.rides,
+             type = 'bar') %>%
+  layout(title = "Rides by popularity")
+p
+```
+
+```{r}
+head(histogram.rides, 20)
+```
+
+
