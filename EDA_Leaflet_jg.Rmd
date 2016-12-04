@@ -1,0 +1,101 @@
+---
+title: "EDA_NY_taxi"
+author: "Team 7"
+date: "December 3, 2016"
+output:
+  html_notebook: default
+  html_document: default
+---
+
+```{r}
+rm(list=ls(all=TRUE))
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(readr)
+library(dplyr)
+library(plotly)
+library(leaflet)
+
+
+```
+
+
+```{r}
+ride.counts <- read_csv("./data/count_table2.csv")
+
+```
+
+## Trying a first map
+```{r}
+m <- leaflet() %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addMarkers(lng=-73.84267, lat=40.86516, popup="New York") %>%
+  addProviderTiles("CartoDB.Positron") %>%
+  addPolylines(lng = c(-73.84267,-73.85), lat = c(40.86516, 40.85) )
+
+m <- addPolylines(m, lng = c(-73.84267,-73.85), lat = c(40.86516, 40.86),
+                  weight = 10)
+m <- addPolylines(m, lng = c(-73.84267,-73.9), lat = c(40.86516, 40.86),
+                  weight = 20)
+m  # Print the map
+```
+
+Summarizing over the whole database
+```{r}
+
+ride.counts.all <- ride.counts %>% 
+  dplyr::group_by(pickup_lon, pickup_lat, dropoff_lon, dropoff_lat) %>%
+  dplyr::summarise(total.count = sum(n))
+
+ride.counts.filter.threshold <- ride.counts.all %>%
+  dplyr::filter(total.count >= 5000) %>% as.matrix()
+
+dim(ride.counts.filter.threshold)
+```
+
+
+```{r}
+#####
+## Arrow painting function ##
+#####
+
+## 1. map has to be a leaftlet map, already defined in a variable
+
+## 2. Arrow.data has to have the following columns:
+# pickup_lon
+# pickup_lat
+# dropoff_lon
+# dropoff_lat
+# total.count
+
+
+paint.arrows <- function(map, arrow.data){
+  
+  arrow.data <- as.matrix(arrow.data)
+  
+  for(i in 1:nrow(arrow.data)){
+    lng.x = c(arrow.data[i,1], arrow.data[i,3])
+    lat.x = c(arrow.data[i,2], arrow.data[i,4])
+    weight.x = arrow.data[i,5]
+    maxweight = max(arrow.data[,5])
+    line.weight = as.numeric(weight.x / maxweight * 20)  
+    map <- addPolylines(map, lng = lng.x, lat = lat.x, weight = line.weight)  
+  }  
+  
+  return(map)
+}
+
+n <- leaflet() %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addProviderTiles("CartoDB.Positron")
+
+n <- paint.arrows(n, ride.counts.filter.threshold)
+
+
+n  # Print the map
+```
+
+
