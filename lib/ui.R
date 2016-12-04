@@ -13,7 +13,11 @@ shinyUI(
                 
                 sidebarMenu(
                   
-                  menuItem("mapping", tabName = "mapping", icon = icon("map")
+                  menuItem("mapping", tabName = "mapping", icon = icon("map"),
+                           sliderInput("slider2", label = h3("24-hour Range"), min = 0, 
+                                       max = 24, value = c(2, 16), step = 2),
+                           sliderInput("slider1", label = h3("Threshold"), min = 0, 
+                                       max = 300000, value = c(50, 300000))
                   )
                   
                 )

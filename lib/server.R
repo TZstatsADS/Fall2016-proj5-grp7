@@ -13,6 +13,8 @@ shinyServer(function(input,output){
       # addProviderTiles("Stamen.Watercolor") %>% 
       setView(lng = -73.97, lat = 40.75, zoom = 13)  
   })
+  output$hourrange <- renderPrint({ input$slider2 })
+  output$threshold <- renderPrint({ input$slider1 })
 })
 
 
