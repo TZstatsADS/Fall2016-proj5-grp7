@@ -16,5 +16,3 @@ shinyServer(function(input,output){
   output$hourrange <- renderPrint({ input$slider2 })
   output$threshold <- renderPrint({ input$slider1 })
 })
-
-
