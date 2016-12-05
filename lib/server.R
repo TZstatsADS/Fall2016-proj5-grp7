@@ -3,14 +3,27 @@ library(shiny)
 library(readr)
 library(dplyr)
 library(plotly)
-
-shinyServer(function(input,output,session){
+library(rCharts)
+shinyServer(function(input,output){
   
   ride.counts <- read_csv("count_table2.csv")
   ride.counts.all <- ride.counts %>% 
     dplyr::group_by(pickup_lon, pickup_lat, dropoff_lon, dropoff_lat) %>%
     dplyr::summarise(total.count = sum(n))
   
+  minthreshold <- eventReactive(input$button,{
+    minthreshold <- input$slider1[1]
+  })
+
+  maxthreshold <- eventReactive(input$button,{
+    maxthreshold <- input$slider1[2]
+  })
+
+  ride.counts.filter.threshold <- eventReactive(input$button,{
+    ride.counts.filter.threshold <- ride.counts.all %>%
+      filter(total.count >= minthreshold() & total.count < maxthreshold())
+  })
+
   # ride.counts.filter.threshold <- reactiveValues()
   # ride.counts.filter.threshold$data <- as.matrix(ride.counts.all) 
   # observe({
@@ -29,8 +42,9 @@ shinyServer(function(input,output,session){
   #     dplyr::filter(total.count >= minthreshold) %>% as.matrix()
   #     }, ignoreNULL = FALSE)
   # print(isolate(ride.counts.filter.threshold()))
-  ride.counts.filter.threshold <- ride.counts.all %>%
-    dplyr::filter(total.count >= 5000) %>% as.matrix()
+  
+  # ride.counts.filter.threshold <- ride.counts.all %>%
+  #   filter(total.count >= 5000) #%>% as.matrix()
   
   get.arrowhead <- function(data.line){
     
@@ -103,15 +117,25 @@ shinyServer(function(input,output,session){
       
       return(map)
     }
-    n=leaflet()%>%
+    
+    n<-leaflet()%>%
       addTiles(urlTemplate = "https://api.mapbox.com/styles/v1/jackiecao/ciu0jcgy800ah2ipgpsw5usmi/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamFja2llY2FvIiwiYSI6ImNpdTBqYXhmcjAxZ24ycGp3ZWZ1bTJoZ3QifQ.VytIrn5ZxVjtZjM15JPA9Q",
                attribution = 'Maps by <a href="http://www.mapbox.com/">Mapbox</a>'
       )%>%
-      # addProviderTiles("Stamen.Watercolor") %>%
       setView(lng = -73.97, lat = 40.75, zoom = 13)
-    # n=paint.arrows(n, ride.counts.filter.threshold)
-    output$map2 <- renderLeaflet({paint.arrows(n, ride.counts.filter.threshold)
     
+    # n=paint.arrows(n, ride.counts.filter.threshold)
+    output$map2 <- renderLeaflet({
+      # n <- Leaflet$new()
+      # n$setView(c(40.75,-73.97),zoom = 13)
+      # n$tileLayer(provider='Stamen.TonerLite') 
+      #   addTiles(urlTemplate = "https://api.mapbox.com/styles/v1/jackiecao/ciu0jcgy800ah2ipgpsw5usmi/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamFja2llY2FvIiwiYSI6ImNpdTBqYXhmcjAxZ24ycGp3ZWZ1bTJoZ3QifQ.VytIrn5ZxVjtZjM15JPA9Q",
+      #            attribution = 'Maps by <a href="http://www.mapbox.com/">Mapbox</a>'
+      #   )%>%
+      #   setView(lng = -73.97, lat = 40.75, zoom = 13)
+      m <- ride.counts.filter.threshold()
+      map <- paint.arrows(n, m)
+      map
     # output$map2 <- renderLeaflet({
     # leaflet()%>%
     #   addTiles(urlTemplate = "https://api.mapbox.com/styles/v1/jackiecao/ciu0jcgy800ah2ipgpsw5usmi/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamFja2llY2FvIiwiYSI6ImNpdTBqYXhmcjAxZ24ycGp3ZWZ1bTJoZ3QifQ.VytIrn5ZxVjtZjM15JPA9Q",
@@ -120,6 +144,6 @@ shinyServer(function(input,output,session){
     #   # addProviderTiles("Stamen.Watercolor") %>%
     #   setView(lng = -73.97, lat = 40.75, zoom = 13)
   })
-  output$hourrange <- renderPrint({ input$slider2 })
-  output$threshold <- renderPrint({ input$slider1 })
+  # output$hourrange <- renderPrint({ input$slider2 })
+  # output$threshold <- renderPrint({ input$slider1 })
 })
