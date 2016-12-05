@@ -1,3 +1,5 @@
+library(shinydashboard)
+library(leaflet)
 sidebar <- dashboardSidebar(tags$head(tags$style(HTML('.main-header .logo {font-family: "Britannic Bold",Britannic Bold, 
                                                            "Britannic Bold", serif;font-weight: bold;font-size: 22px;}'
 )
@@ -19,7 +21,11 @@ body <- dashboardBody(
                           draggable = TRUE, top = 70, left = 300, right = "auto", bottom = "auto",
                           width = 330, height = "auto",
                           sliderInput("slider2", label = h3("24-hour Range"), min = 0, max = 24, value = c(2, 16), step = 2),
-                          sliderInput("slider1", label = h3("Threshold"), min = 0, max = 300000, value = c(50, 300000))))
+                          sliderInput("slider1", label = h3("Threshold"), min = 0, max = 300000, value = c(50, 300000)),
+                          div(actionButton('update', 'UPDATE', icon = shiny::icon('calendar'), style="color: #fff; background-color: #337ab7; border-color: #2e6da4"), style = 'padding-left: 11px'),
+                          tags$style(type='text/css', "#submit{height: 40px; width:62%; font-size: 16px}"),
+                          tags$br()))
+                          
     ),
     tabItem(tabName = "EDA",h2("Widgets tab content")))
 )

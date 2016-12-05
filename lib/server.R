@@ -4,13 +4,31 @@ library(readr)
 library(dplyr)
 library(plotly)
 
-shinyServer(function(input,output){
+shinyServer(function(input,output,session){
   
   ride.counts <- read_csv("count_table2.csv")
   ride.counts.all <- ride.counts %>% 
     dplyr::group_by(pickup_lon, pickup_lat, dropoff_lon, dropoff_lat) %>%
     dplyr::summarise(total.count = sum(n))
   
+  # ride.counts.filter.threshold <- reactiveValues()
+  # ride.counts.filter.threshold$data <- as.matrix(ride.counts.all) 
+  # observe({
+  #   if(input$update){
+  #     minthreshold <- input$slider1[1]
+  #     maxthreshold <- input$slider1[2]
+  #     ride.counts.filter.threshold$data <- ride.counts.all %>% dplyr::filter(total.count >= minthreshold) %>% as.matrix()
+  #  }
+  # })
+  # ride.counts.filter.threshold <- eventReactive(
+  #   input$update,
+  #   {
+  #     minthreshold <- input$slider1[1]
+  #     maxthreshold <- input$slider1[2]
+  #     ride.counts.filter.threshold <- ride.counts.all %>%
+  #     dplyr::filter(total.count >= minthreshold) %>% as.matrix()
+  #     }, ignoreNULL = FALSE)
+  # print(isolate(ride.counts.filter.threshold()))
   ride.counts.filter.threshold <- ride.counts.all %>%
     dplyr::filter(total.count >= 5000) %>% as.matrix()
   
@@ -91,8 +109,8 @@ shinyServer(function(input,output){
       )%>%
       # addProviderTiles("Stamen.Watercolor") %>%
       setView(lng = -73.97, lat = 40.75, zoom = 13)
-    n=paint.arrows(n, ride.counts.filter.threshold)
-    output$map2 <- renderLeaflet({n
+    # n=paint.arrows(n, ride.counts.filter.threshold)
+    output$map2 <- renderLeaflet({paint.arrows(n, ride.counts.filter.threshold)
     
     # output$map2 <- renderLeaflet({
     # leaflet()%>%
