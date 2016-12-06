@@ -22,8 +22,8 @@ body <- dashboardBody(
                 absolutePanel(id = "controls",class = "panel panel-default", fixed = TRUE,
                               draggable = TRUE, top = 70, left = 300, right = "auto", bottom = "auto",
                               width = 330, height = "auto",
-                              sliderInput("slider2", label = h3("24-hour Range"), min = 0, max = 24, value = c(2, 16), step = 2),
-                              sliderInput("slider1", label = h3("Threshold"), min = 1000, max = 4000, value = c(500, 4500), step = 100),
+                              sliderInput("slider2", label = h3("24-hour Range"), min = 0, max = 22, value = c(4, 6), step = 2),
+                              sliderInput("slider1", label = h3("Threshold"), min = 200, max = 4000, value = c(300, 400), step = 100),
                               actionButton("button", 'UPDATE', icon = shiny::icon('calendar'), style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
                 ))
             

@@ -6,7 +6,7 @@ library(plotly)
 
 shinyServer(function(input,output){
   
-  ride.counts <- read_csv("count_table2.csv")
+  ride.counts <- read_csv("count_table_total.csv")
   # ride.counts.all <- ride.counts %>% 
   #   dplyr::group_by(pickup_lon, pickup_lat, dropoff_lon, dropoff_lat, time_interval) %>%
   #   dplyr::summarise(total.count = sum(n))
@@ -27,11 +27,13 @@ shinyServer(function(input,output){
   })
   
   ride.counts.filter.threshold <- eventReactive(input$button,{
-    ride <- ride.counts %>%
+    ride.counts.all <- ride.counts %>%
       filter(n >= minthreshold() & n < maxthreshold()) %>% 
-      filter(time_interval >= minhour() & time_interval <= maxhour())
+      filter(time_interval >= minhour() & time_interval <= maxhour()) %>% as.data.frame()
+    ride.counts.all$n <- as.numeric(ride.counts.all$n)
     # ride.counts.filter.threshold <- ride.counts.filter.threshold[,-which(names(ride.counts.filter.threshold %in% c("time_interval")))]
-    ride.counts.filter.threshold <- ride[,-c(1:3)]
+    ride.counts.filter.threshold <- ride.counts.all[,-c(1:3)]
+    # ride.counts.filter.threshold[,6] <- as.integer(as.character(ride.counts.filter.threshold[,6]))
   })
   
   # ride.counts.filter.threshold <- eventReactive(input$button,{
@@ -102,22 +104,29 @@ shinyServer(function(input,output){
   
   paint.arrows <- function(map, arrow.data){
     
-    arrow.data <- as.matrix(arrow.data)
+    #arrow.data <- as.matrix(arrow.data)
     
     for(i in 1:nrow(arrow.data)){
       
       # Get Data from row
       lng.x = c(arrow.data[i,1], arrow.data[i,3])
       lat.x = c(arrow.data[i,2], arrow.data[i,4])
-      weight.x = arrow.data[i,5]
-      maxweight = max(arrow.data[,5])
-      line.weight = as.numeric(weight.x / maxweight * 20)  
+      weight.x = arrow.data[i,6]
+      maxweight = max(arrow.data[,6])
+      line.weight = as.numeric(weight.x / maxweight * 20)
+      
+      taxi.color <- ""
+      if(arrow.data[i,5] == "yellow"){
+        taxi.color <- "orange"
+      }
+      else{
+        taxi.color <- arrow.data[i,5]
+      }
       
       # Paint line
+      map <- addPolylines(map, lng = lng.x, lat = lat.x, weight = line.weight, color = taxi.color)
       
-      map <- addPolylines(map, lng = lng.x, lat = lat.x, weight = line.weight)
-      
-      
+      #head(ride.counts.filter.threshold)    
       ## Paint Arrow Heads
       
       # Get Data of arrow head
@@ -133,8 +142,10 @@ shinyServer(function(input,output){
         lat.arrow.2 <- c(arrow.head[2,2], arrow.head[2,4])
         
         # Paint Arrow Head
-        map <- addPolylines(map, lng = lng.arrow.1, lat = lat.arrow.1, weight = line.weight)    
-        map <- addPolylines(map, lng = lng.arrow.2, lat = lat.arrow.2, weight = line.weight)        
+        map <- addPolylines(map, lng = lng.arrow.1, lat = lat.arrow.1, 
+                            weight = line.weight, color = taxi.color)    
+        map <- addPolylines(map, lng = lng.arrow.2, lat = lat.arrow.2, 
+                            weight = line.weight, color = taxi.color)        
       }
     }  
     
