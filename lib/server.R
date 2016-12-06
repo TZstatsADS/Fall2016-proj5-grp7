@@ -11,14 +11,17 @@ shinyServer(function(input,output){
   #   dplyr::group_by(pickup_lon, pickup_lat, dropoff_lon, dropoff_lat, time_interval) %>%
   #   dplyr::summarise(total.count = sum(n))
   
-  minthreshold <- eventReactive(input$button,{
-    minthreshold <- input$slider1[1]
+  # minthreshold <- eventReactive(input$button,{
+  #   minthreshold <- input$slider1[1]
+  # })
+  # 
+  # maxthreshold <- eventReactive(input$button,{
+  #   maxthreshold <- input$slider1[2]
+  # })
+
+  topPopular <- eventReactive(input$button,{
+    topPopular <- as.numeric(input$topPop)
   })
-  
-  maxthreshold <- eventReactive(input$button,{
-    maxthreshold <- input$slider1[2]
-  })
-  
   minhour <- eventReactive(input$button,{
     minhour <- input$slider2[1]
   })
@@ -28,26 +31,22 @@ shinyServer(function(input,output){
   
   ride.counts.filter.threshold <- eventReactive(input$button,{
     ride.counts.all <- ride.counts %>%
-      filter(n >= minthreshold() & n < maxthreshold()) %>% 
-      filter(time_interval >= minhour() & time_interval <= maxhour()) %>% as.data.frame()
+      filter(time_interval >= minhour() & time_interval <= maxhour())
     ride.counts.all$n <- as.numeric(ride.counts.all$n)
-    # ride.counts.filter.threshold <- ride.counts.filter.threshold[,-which(names(ride.counts.filter.threshold %in% c("time_interval")))]
-    ride.counts.filter.threshold <- ride.counts.all[,-c(1:3)]
-    # ride.counts.filter.threshold[,6] <- as.integer(as.character(ride.counts.filter.threshold[,6]))
+    ride.counts.all <- ride.counts.all %>%
+      group_by(pickup_lon, pickup_lat, dropoff_lon, dropoff_lat, color)%>%
+      summarise(n = sum(n)) %>% as.data.frame()
+    ride.counts.filter.threshold <- ride.counts.all %>% top_n(topPopular())
+   
+  # ride.counts.all <- ride.counts %>%
+  #   filter(n >= minthreshold() & n < maxthreshold()) %>%
+  #   filter(time_interval >= minhour() & time_interval <= maxhour()) %>% as.data.frame()
+  # ride.counts.all$n <- as.numeric(ride.counts.all$n)
+  # ride.counts.filter.threshold <- ride.counts.all[,-c(1:3)]
+  
+  # ride.counts.filter.threshold[,6] <- as.integer(as.character(ride.counts.filter.threshold[,6]))
   })
   
-  # ride.counts.filter.threshold <- eventReactive(input$button,{
-  #   ride.counts.filter.threshold <- ride.counts.all %>%
-  #     filter(total.count >= minthreshold() & total.count < maxthreshold()) %>%
-  #     filter(time_interval >= minhour() & time_interval >= maxhour())
-  # })
-  
-  # ride.counts.filter.threshold <- ride.counts.filter.threshold %>% 
-  #   dplyr::group_by(pickup_lon, pickup_lat, dropoff_lon, dropoff_lat)
-  # ride.counts.filter.threshold <- eventReactive(input$button,{
-  #   ride.counts.filter.threshold <- ride.counts.all %>% 
-  # 
-  # })
   
   # ride.counts.filter.threshold <- reactiveValues()
   # ride.counts.filter.threshold$data <- as.matrix(ride.counts.all) 

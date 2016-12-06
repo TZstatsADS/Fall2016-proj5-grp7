@@ -1,6 +1,6 @@
 library(shinydashboard)
 library(leaflet)
-topChoices <- c(1,5,10,20,50,100)
+topChoices <- c(1,5,10,20,50,100,500,1000)
 sidebar <- dashboardSidebar(tags$head(tags$style(HTML('.main-header .logo {font-family: "Britannic Bold",Britannic Bold, 
                                                       "Britannic Bold", serif;font-weight: bold;font-size: 22px;}'
 )
@@ -23,9 +23,9 @@ body <- dashboardBody(
                               draggable = TRUE, top = 70, left = 300, right = "auto", bottom = "auto",
                               width = 330, height = "auto",
                               sliderInput("slider2", label = h3("24-hour Range"), min = 0, max = 22, value = c(4, 6), step = 2),
-                              sliderInput("slider1", label = h3("Threshold"), min = 1000, max = 4000, value = c(500, 4500), step = 100),
+                              # sliderInput("slider1", label = h3("Threshold"), min = 1000, max = 4000, value = c(500, 4500), step = 100),
                               
-                              # selectInput("topPop", label = h3("Number of TOP Popular Locations"), as.numeric(topChoices),selected = 10),
+                              selectInput("topPop", label = h3("Number of TOP Popular Locations"), as.numeric(topChoices),selected = 10),
                               checkboxInput(inputId = "color_yellow",label = h3("Show Yellow Taxi"),value = FALSE),
                               checkboxInput(inputId = "color_green",label = h3("Show Green Taxi"),value = TRUE),
                               actionButton("button", 'UPDATE', icon = shiny::icon('calendar'), style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
@@ -35,8 +35,6 @@ body <- dashboardBody(
     tabItem(tabName = "EDA",h2("Widgets tab content"),
             selectInput(inputId = "table_month",label = "PICK YEAR-MONTH:", 
                         choices = c("2015-07","2015-08","2015-09","2015-10","2015-11","2015-12","2016-01","2016-02","2016-03","2016-04","2016-05","2016-06")),
-            selectInput(inputId = "table_color",label = "PICK TAXI COLOR:",
-                        choices = c("green","yellow")),
             plotlyOutput("taxi_time_table_plot")))
 )
 
