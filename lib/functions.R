@@ -51,8 +51,10 @@ get.arrowhead <- function(origin, destination){
 #            and the curve is more close to straight line
 # num_node: number of nodes to return, higher value will yield smoother curve
 Get_curve <- function(A,B,intensity,num_node) {
-  Calc_theta <- function(A,B) 
-  {
+
+  
+  
+  Calc_theta <- function(A,B) {
     dis <- sqrt((A[1]-B[1])^2+(A[2]-B[2])^2)
     theta <- asin(abs((B[2]-A[2])/dis))
     theta <- ifelse(A[1]>B[1],ifelse(A[2]<B[2],pi/2-theta+pi/2,theta+pi),ifelse(A[2]<B[2],theta,pi/2-theta+pi*1.5))
@@ -63,25 +65,33 @@ Get_curve <- function(A,B,intensity,num_node) {
   if(intensity<1) 
     intensity=1
   
-  find_radius=c(5,1.6,1,0.78,0.65,0.58,0.54,0.518,0.505,0.5000001) 
-  radius=find_radius[round(intensity)]
-
-  dis <- sqrt((A[1]-B[1])^2+(A[2]-B[2])^2)
-  height <- dis*sqrt(radius^2-0.25)
-  theta <- Calc_theta(A,B)
-  circlecenter <- c((A[1]+B[1])/2+height*sin(theta),(A[2]+B[2])/2-height*cos(theta))   
-  curve_start <- Calc_theta(circlecenter,A)
-  curve_end <- Calc_theta(circlecenter,B)
+  dif.lon <- A[1] - B[1]
+  dif.lat <- A[2] - B[2]
   
-  #browser()
-  
-  
-  if( abs(curve_start - curve_end) >= (curve_start + 2*pi - curve_end) ){
-    curve_start = curve_start+2*pi
-  } 
-
-  angle <- seq(curve_start,curve_end,length.out=num_node)
-  path <- cbind(circlecenter[1]+radius*dis*cos(angle),circlecenter[2]+radius*dis*sin(angle))
+  if(dif.lon > 0 & dif.lat > 0){
+    find_radius=c(5,1.6,1,0.78,0.65,0.58,0.54,0.518,0.505,0.5000001) 
+    radius=find_radius[round(intensity)]
+    
+    dis <- sqrt((A[1]-B[1])^2+(A[2]-B[2])^2)
+    height <- dis*sqrt(radius^2-0.25)
+    theta <- Calc_theta(A,B)
+    circlecenter <- c((A[1]+B[1])/2+height*sin(theta),(A[2]+B[2])/2-height*cos(theta))   
+    curve_start <- Calc_theta(circlecenter,A)
+    curve_end <- Calc_theta(circlecenter,B)
+    
+    #browser()
+    
+    
+    if( abs(curve_start - curve_end) >= (curve_start + 2*pi - curve_end) ){
+      curve_start = curve_start+2*pi
+    } 
+    
+    angle <- seq(curve_start,curve_end,length.out=num_node)
+    path <- cbind(circlecenter[1]+radius*dis*cos(angle),circlecenter[2]+radius*dis*sin(angle))
+  }
+  else{
+    path <- matrix(c(A[1], A[2], B[1], B[2], nrow = 2, byrow = TRUE))
+  }
 
   return(path)
 }
@@ -112,10 +122,14 @@ paint.arrows <- function(map, arrow.data){
     origin <- c(arrow.data[i,1], arrow.data[i,2])
     dest <- c(arrow.data[i,3], arrow.data[i,4])
 
+    
     # Generate curve
     
     num_node <- 5
     intensity <- 1
+    
+    
+    
     curve.to.draw <- Get_curve(A = origin, B = dest, intensity, num_node)
     
     # Paint line, represented by each of the segments of the curve
