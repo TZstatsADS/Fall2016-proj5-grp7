@@ -37,7 +37,7 @@ body <- dashboardBody(
                         choices = c("2015-07","2015-08","2015-09","2015-10","2015-11","2015-12","2016-01","2016-02","2016-03","2016-04","2016-05","2016-06")),
             selectInput(inputId = "table_color",label = "PICK TAXI COLOR:",
                         choices = c("green","yellow")),
-            plotOutput("taxi_time_table_plot")))
+            plotlyOutput("taxi_time_table_plot")))
 )
 
 dashboardPage(skin = "black",dashboardHeader(title = "NYC TAXI"),sidebar,body

@@ -183,24 +183,38 @@ shinyServer(function(input,output){
   
   library(ggplot2)
   library(scales)
+  library(plotly)
   taxi_time_table <- read.csv("taxi_time_table.csv")
-  bar_t <- function(x,y){
-    taxi_time_table$time_interval <- factor(taxi_time_table$time_interval,levels = c("0 - 2","2 - 4","4 - 6","6 - 8","8 - 10","10 - 12","12 - 14","14 - 16","16 - 18","18 - 20","20 - 22","22 - 24"))
-    taxi <- taxi_time_table %>% filter(color == x,pickup_month == y)
-    ggplot(data = taxi,aes(x = time_interval,y = n,fill = n)) +
-      scale_fill_gradient("Count", low = paste("light",x), high = x)+
-      geom_bar(stat="identity") +
-      theme(axis.text.x = element_text(size=6,face="bold",angle = 30,
-                                       hjust=1),
-            plot.title = element_text(size=16,face="bold")) +
-      ggtitle(paste(x,"taxi pickup numbers in",y)) + ylab("pickup numbers") +
-      xlab("Time interval")
-  }
-  output$taxi_time_table_plot <- renderPlot({
-    x <- input$table_color
+  bar_t <- function(Y){
+    taxi_time_table$time_interval <- factor(taxi_time_table$time_interval,
+                                            levels = c("0 - 2","2 - 4","4 - 6","6 - 8","8 - 10","10 - 12","12 - 14","14 - 16","16 - 18",
+                                                       "18 - 20","20 - 22","22 - 24"))
+    taxi <- taxi_time_table %>% filter(pickup_month == Y)
+    plot_ly(data = taxi, x = ~time_interval,y = ~yellow, type = 'bar', name = 'pickups for yellow taxi',
+            marker = list(color = 'yellow')) %>%
+      add_trace(y = ~green, name = 'pickups for green taxi', marker = list(color = 'green')) %>%
+      layout(title = paste("taxi pickups in NYC on",Y),
+             xaxis = list(
+               title = "",
+               tickfont = list(
+                 size = 14,
+                 color = 'rgb(107, 107, 107)')),
+             yaxis = list(
+               title = 'pickup number',
+               titlefont = list(
+                 size = 16,
+                 color = 'rgb(107, 107, 107)'),
+               tickfont = list(
+                 size = 14,
+                 color = 'rgb(107, 107, 107)')),
+             legend = list(x = 0, y = 1, bgcolor = 'rgba(255, 255, 255, 0)', bordercolor = 'rgba(255, 255, 255, 0)'),
+             barmode = 'group', bargap = 0.15, bargroupgap = 0.1)
+    
+  } 
+  output$taxi_time_table_plot <- renderPlotly({
     y <- input$table_month
-    bar_plot <- bar_t(x,y)
-    print(bar_plot)
+    bar_plot <- bar_t(y)
+  
   })
   
   
