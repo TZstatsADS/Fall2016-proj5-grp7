@@ -1,6 +1,6 @@
 library(shinydashboard)
 library(leaflet)
-
+topChoices <- c(1,5,10,20,50,100)
 sidebar <- dashboardSidebar(tags$head(tags$style(HTML('.main-header .logo {font-family: "Britannic Bold",Britannic Bold, 
                                                       "Britannic Bold", serif;font-weight: bold;font-size: 22px;}'
 )
@@ -25,7 +25,7 @@ body <- dashboardBody(
                               sliderInput("slider2", label = h3("24-hour Range"), min = 0, max = 22, value = c(4, 6), step = 2),
                               sliderInput("slider1", label = h3("Threshold"), min = 1000, max = 4000, value = c(500, 4500), step = 100),
                               
-                              # selectInput("slider1", label = h3("Number of TOP Popular Locations"), choices = c(1,5,10,20,50),selected = 5),
+                              # selectInput("topPop", label = h3("Number of TOP Popular Locations"), as.numeric(topChoices),selected = 10),
                               checkboxInput(inputId = "color_yellow",label = h3("Show Yellow Taxi"),value = FALSE),
                               checkboxInput(inputId = "color_green",label = h3("Show Green Taxi"),value = TRUE),
                               actionButton("button", 'UPDATE', icon = shiny::icon('calendar'), style="color: #fff; background-color: #337ab7; border-color: #2e6da4")

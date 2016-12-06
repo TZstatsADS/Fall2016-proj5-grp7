@@ -178,30 +178,30 @@ shinyServer(function(input,output){
     #   # addProviderTiles("Stamen.Watercolor") %>%
     #   setView(lng = -73.97, lat = 40.75, zoom = 13)
   })
-    #########################################################################################################
+  #########################################################################################################
   
-    
-    library(ggplot2)
-    library(scales)
-    taxi_time_table <- read.csv("taxi_time_table.csv")
-    bar_t <- function(x,y){
-      taxi_time_table$time_interval <- factor(taxi_time_table$time_interval,levels = c("0 - 2","2 - 4","4 - 6","6 - 8","8 - 10","10 - 12","12 - 14","14 - 16","16 - 18","18 - 20","20 - 22","22 - 24"))
-      taxi <- taxi_time_table %>% filter(color == x,pickup_month == y)
-      ggplot(data = taxi,aes(x = time_interval,y = n,fill = n)) +
-        scale_fill_gradient("Count", low = paste("light",x), high = x)+
-        geom_bar(stat="identity") +
-        theme(axis.text.x = element_text(size=6,face="bold",angle = 30,
-                                         hjust=1),
-              plot.title = element_text(size=16,face="bold")) +
-        ggtitle(paste(x,"taxi pickup numbers in",y)) + ylab("pickup numbers") +
-        xlab("Time interval")
-    }
-    output$taxi_time_table_plot <- renderPlot({
-      x <- input$table_color
-      y <- input$table_month
-      bar_plot <- bar_t(x,y)
-      print(bar_plot)
-    })
- 
- 
+  
+  library(ggplot2)
+  library(scales)
+  taxi_time_table <- read.csv("taxi_time_table.csv")
+  bar_t <- function(x,y){
+    taxi_time_table$time_interval <- factor(taxi_time_table$time_interval,levels = c("0 - 2","2 - 4","4 - 6","6 - 8","8 - 10","10 - 12","12 - 14","14 - 16","16 - 18","18 - 20","20 - 22","22 - 24"))
+    taxi <- taxi_time_table %>% filter(color == x,pickup_month == y)
+    ggplot(data = taxi,aes(x = time_interval,y = n,fill = n)) +
+      scale_fill_gradient("Count", low = paste("light",x), high = x)+
+      geom_bar(stat="identity") +
+      theme(axis.text.x = element_text(size=6,face="bold",angle = 30,
+                                       hjust=1),
+            plot.title = element_text(size=16,face="bold")) +
+      ggtitle(paste(x,"taxi pickup numbers in",y)) + ylab("pickup numbers") +
+      xlab("Time interval")
+  }
+  output$taxi_time_table_plot <- renderPlot({
+    x <- input$table_color
+    y <- input$table_month
+    bar_plot <- bar_t(x,y)
+    print(bar_plot)
+  })
+  
+  
 })
