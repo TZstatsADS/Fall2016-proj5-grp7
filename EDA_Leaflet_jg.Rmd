@@ -24,7 +24,7 @@ library(leaflet)
 
 
 ```{r}
-ride.counts <- read_csv("./data/count_table2.csv")
+ride.counts <- read_csv("./data/count_table_total.csv")
 
 ```
 
@@ -47,11 +47,14 @@ Summarizing over the whole database
 ```{r}
 
 ride.counts.all <- ride.counts %>% 
-  dplyr::group_by(pickup_lon, pickup_lat, dropoff_lon, dropoff_lat) %>%
+  dplyr::group_by(pickup_lon, pickup_lat, dropoff_lon, dropoff_lat, color) %>%
   dplyr::summarise(total.count = sum(n))
 
-ride.counts.filter.threshold <- ride.counts.all %>%
-  dplyr::filter(total.count >= 5000) %>% as.matrix()
+ride.counts.all$total.count <- as.numeric(ride.counts.all$total.count)
+
+ride.counts.filter.threshold <- ride.counts.all %>% dplyr::filter(total.count >= 5000)
+
+ride.counts.filter.threshold[,6] <- as.integer(as.character(ride.counts.filter.threshold[,6]))
 
 dim(ride.counts.filter.threshold)
 ```
@@ -101,8 +104,6 @@ get.arrowhead <- function(data.line){
   return(final.matrix)
 }
 
-
-
 paint.arrows <- function(map, arrow.data){
   
   arrow.data <- as.matrix(arrow.data)
@@ -112,14 +113,14 @@ paint.arrows <- function(map, arrow.data){
     # Get Data from row
     lng.x = c(arrow.data[i,1], arrow.data[i,3])
     lat.x = c(arrow.data[i,2], arrow.data[i,4])
-    weight.x = arrow.data[i,5]
-    maxweight = max(arrow.data[,5])
-    line.weight = as.numeric(weight.x / maxweight * 20)  
+    weight.x = arrow.data[i,6]
+    maxweight = max(arrow.data[,6])
+    line.weight = as.numeric(weight.x / maxweight * 20)
     
     # Paint line
-    map <- addPolylines(map, lng = lng.x, lat = lat.x, weight = line.weight)
+    map <- addPolylines(map, lng = lng.x, lat = lat.x, weight = line.weight, color = arrow.data[i,5])
     
-    
+    #head(ride.counts.filter.threshold)    
     ## Paint Arrow Heads
     
     # Get Data of arrow head
@@ -143,14 +144,16 @@ paint.arrows <- function(map, arrow.data){
   return(map)
 }
 
+```
+
+
+```{r, fig.width=10}
 n <- leaflet() %>%
   addTiles() %>%  # Add default OpenStreetMap map tiles
   addProviderTiles("CartoDB.Positron")
 
 n <- paint.arrows(n, ride.counts.filter.threshold)
 
-
 n  # Print the map
 ```
-
 

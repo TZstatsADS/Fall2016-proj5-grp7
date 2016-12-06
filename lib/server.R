@@ -4,6 +4,7 @@ library(readr)
 library(dplyr)
 library(plotly)
 library(rCharts)
+
 shinyServer(function(input,output){
   
   ride.counts <- read_csv("count_table2.csv")
