@@ -7,18 +7,14 @@ output:
   html_document: default
 ---
 
-```{r}
-rm(list=ls(all=TRUE))
-```
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 library(readr)
 library(dplyr)
-library(plotly)
 library(leaflet)
 
+rm(list=ls(all=TRUE))
 
 ```
 
@@ -48,11 +44,12 @@ Summarizing over the whole database
 
 ride.counts.all <- ride.counts %>% 
   dplyr::group_by(pickup_lon, pickup_lat, dropoff_lon, dropoff_lat, color) %>%
-  dplyr::summarise(total.count = sum(n))
+  dplyr::summarise(total.count = sum(n)) %>% as.data.frame()
 
-ride.counts.all$total.count <- as.numeric(ride.counts.all$total.count)
+#ride.counts.all$total.count <- as.numeric(ride.counts.all$total.count)
 
-ride.counts.filter.threshold <- ride.counts.all %>% dplyr::filter(total.count >= 5000)
+
+ride.counts.filter.threshold <- dplyr::filter(ride.counts.all, total.count >= 30000)
 
 ride.counts.filter.threshold[,6] <- as.integer(as.character(ride.counts.filter.threshold[,6]))
 
@@ -106,7 +103,7 @@ get.arrowhead <- function(data.line){
 
 paint.arrows <- function(map, arrow.data){
   
-  arrow.data <- as.matrix(arrow.data)
+  #arrow.data <- as.matrix(arrow.data)
   
   for(i in 1:nrow(arrow.data)){
     
@@ -117,8 +114,16 @@ paint.arrows <- function(map, arrow.data){
     maxweight = max(arrow.data[,6])
     line.weight = as.numeric(weight.x / maxweight * 20)
     
+    taxi.color <- ""
+    if(arrow.data[i,5] == "yellow"){
+      taxi.color <- "orange"
+    }
+    else{
+      taxi.color <- arrow.data[i,5]
+    }
+    
     # Paint line
-    map <- addPolylines(map, lng = lng.x, lat = lat.x, weight = line.weight, color = arrow.data[i,5])
+    map <- addPolylines(map, lng = lng.x, lat = lat.x, weight = line.weight, color = taxi.color)
     
     #head(ride.counts.filter.threshold)    
     ## Paint Arrow Heads
@@ -136,8 +141,10 @@ paint.arrows <- function(map, arrow.data){
       lat.arrow.2 <- c(arrow.head[2,2], arrow.head[2,4])
   
       # Paint Arrow Head
-      map <- addPolylines(map, lng = lng.arrow.1, lat = lat.arrow.1, weight = line.weight)    
-      map <- addPolylines(map, lng = lng.arrow.2, lat = lat.arrow.2, weight = line.weight)        
+      map <- addPolylines(map, lng = lng.arrow.1, lat = lat.arrow.1, 
+                          weight = line.weight, color = taxi.color)    
+      map <- addPolylines(map, lng = lng.arrow.2, lat = lat.arrow.2, 
+                          weight = line.weight, color = taxi.color)        
     }
   }  
   
