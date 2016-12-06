@@ -24,7 +24,9 @@ library(leaflet)
 
 
 ```{r}
-ride.counts <- read_csv("./data/count_table2.csv")
+
+#ride.counts <- read_csv("./data/count_table_green.csv.csv")
+ride.counts <- read_csv("./data/count_table_total.csv")
 
 ```
 
@@ -50,14 +52,14 @@ ride.counts.all <- ride.counts %>%
   dplyr::group_by(pickup_lon, pickup_lat, dropoff_lon, dropoff_lat) %>%
   dplyr::summarise(total.count = sum(n))
 
-ride.counts.filter.threshold <- ride.counts.all %>%
-  dplyr::filter(total.count >= 5000) %>% as.matrix()
-
+#ride.counts.filter.threshold <- ride.counts.all %>%
+#  dplyr::filter(total.count >= 5000) %>% as.matrix()
+ride.counts.filter.threshold <- head(ride.counts.all,20)
 dim(ride.counts.filter.threshold)
 ```
 
 
-```{r}
+```{r, fig.width=10}
 #####
 ## Arrow painting function ##
 #####
@@ -152,5 +154,3 @@ n <- paint.arrows(n, ride.counts.filter.threshold)
 
 n  # Print the map
 ```
-
-
