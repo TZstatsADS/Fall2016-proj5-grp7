@@ -68,6 +68,7 @@ n <- leaflet() %>%
   addProviderTiles("CartoDB.Positron")
 
 n <- paint.arrows(n, ride.counts.filter.threshold)
+n
 ```
 
 ```{r}
@@ -78,11 +79,11 @@ nn <- leaflet() %>%
   addTiles() %>%  # Add default OpenStreetMap map tiles
   addProviderTiles("CartoDB.Positron")
 
-zone_name <- "EWR"
+zone_name <- "East Harlem North"
 time_start <- 0
 time_end <- 8
 num_arrows <- 30
-inorout <- 1
+#inorout <- 1
 
 Draw_arrow_by_region <- function(zone_name,time_start,time_end,num_arrows,inorout){
 ride_counts_byzone <- ride.counts %>%
