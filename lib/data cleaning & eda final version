@@ -1,0 +1,410 @@
+library("dplyr")
+library("tidyr")
+library("data.table")
+library("ggmap")
+library("ggplot2")
+library("leaflet")
+library("scales")
+setwd("/Users/zuonianyao/Documents/GR5243/Project5")
+id <- read.csv(url("https://raw.githubusercontent.com/toddwschneider/nyc-taxi-data/master/data/taxi-zone-lookup-with-ntacode.csv"))
+id$address <- paste(id$zone,", New York City, NY")
+coor <- geocode(id$address) 
+id <- data.frame(id,coor)
+# 16-03-yellow
+yellow_1603 <- fread("yellow_tripdata_2016-03.csv")
+yellow_1603 <- yellow_1603 %>% 
+               dplyr::select(tpep_pickup_datetime,tpep_dropoff_datetime,
+                             trip_distance,pickup_longitude,pickup_latitude,
+                             dropoff_longitude,dropoff_latitude,total_amount) %>%
+               mutate(time = as.numeric(as.POSIXct(strptime(tpep_dropoff_datetime,
+                "%Y-%m-%d %H:%M:%S"))-as.POSIXct(strptime(tpep_pickup_datetime,
+                "%Y-%m-%d %H:%M:%S")))/60) %>% 
+               separate(tpep_pickup_datetime,c("pickup_date","pickup_time"),
+               sep = " ") %>% 
+               group_by(pickup_date) %>%
+               sample_frac(0.01,replace = F) %>% 
+               ungroup() %>%
+               separate(pickup_time,c("pickup_h","pickup_min","pickup_sec"),sep=":") %>%
+               dplyr::select(pickup_date,pickup_h,time,trip_distance,pickup_longitude,
+                             pickup_latitude, dropoff_longitude,dropoff_latitude,
+                             total_amount) %>%
+               mutate(pickup_month = substr(pickup_date,1,7))
+yellow_1603$pickup_h <- as.numeric(yellow_1603$pickup_h)
+yellow_1603_v2 <- yellow_1603 %>% 
+  mutate(time_interval = ifelse(pickup_h %in% 0:1.9,0,ifelse(
+    pickup_h %in% 2:3.9,2,ifelse(pickup_h %in% 4:5.9,4,ifelse(
+      pickup_h %in% 6:7.9,6,ifelse(pickup_h %in% 8:9.9,8,ifelse(
+        pickup_h %in% 10:11.9,10,ifelse(pickup_h %in% 12:13.9,12,ifelse(
+          pickup_h %in% 14:15.9,14,ifelse(pickup_h %in% 16:17.9,16,ifelse(
+            pickup_h %in% 18:19.9,18,ifelse(pickup_h %in% 20:21.9,20,22))))))))))))
+rm(yellow_1603)
+write.table(yellow_1603_v2,"yellow_1603_v2.csv",sep = ",",row.names = F)
+
+#16-05-yellow
+yellow_1605 <- fread("yellow_tripdata_2016-05.csv")
+yellow_1605 <- yellow_1605 %>% 
+  dplyr::select(tpep_pickup_datetime,tpep_dropoff_datetime,
+                trip_distance,pickup_longitude,pickup_latitude,
+                dropoff_longitude,dropoff_latitude,total_amount) %>%
+  mutate(time = as.numeric(as.POSIXct(strptime(tpep_dropoff_datetime,
+                                               "%Y-%m-%d %H:%M:%S"))-as.POSIXct(strptime(tpep_pickup_datetime,
+                                                                                         "%Y-%m-%d %H:%M:%S")))/60) %>% 
+  separate(tpep_pickup_datetime,c("pickup_date","pickup_time"),
+           sep = " ") %>% 
+  group_by(pickup_date) %>%
+  sample_frac(0.01,replace = F) %>% 
+  ungroup() %>%
+  separate(pickup_time,c("pickup_h","pickup_min","pickup_sec"),sep=":") %>%
+  dplyr::select(pickup_date,pickup_h,time,trip_distance,pickup_longitude,
+                pickup_latitude, dropoff_longitude,dropoff_latitude,
+                total_amount) %>%
+  mutate(pickup_month = substr(pickup_date,1,7))
+yellow_1605$pickup_h <- as.numeric(yellow_1605$pickup_h)
+yellow_1605_v2 <- yellow_1605 %>% 
+  mutate(time_interval = ifelse(pickup_h %in% 0:1.9,0,ifelse(
+    pickup_h %in% 2:3.9,2,ifelse(pickup_h %in% 4:5.9,4,ifelse(
+      pickup_h %in% 6:7.9,6,ifelse(pickup_h %in% 8:9.9,8,ifelse(
+        pickup_h %in% 10:11.9,10,ifelse(pickup_h %in% 12:13.9,12,ifelse(
+          pickup_h %in% 14:15.9,14,ifelse(pickup_h %in% 16:17.9,16,ifelse(
+            pickup_h %in% 18:19.9,18,ifelse(pickup_h %in% 20:21.9,20,22))))))))))))
+rm(yellow_1605)
+write.table(yellow_1605_v2,"yellow_1605_v2.csv",sep = ",",row.names = F)
+
+#16-02-yellow
+yellow_1602 <- fread("yellow_tripdata_2016-02.csv")
+yellow_1602 <- yellow_1602 %>% 
+  dplyr::select(tpep_pickup_datetime,tpep_dropoff_datetime,
+                trip_distance,pickup_longitude,pickup_latitude,
+                dropoff_longitude,dropoff_latitude,total_amount) %>%
+  mutate(time = as.numeric(as.POSIXct(strptime(tpep_dropoff_datetime,
+                                               "%Y-%m-%d %H:%M:%S"))-as.POSIXct(strptime(tpep_pickup_datetime,
+                                                                                         "%Y-%m-%d %H:%M:%S")))/60) %>% 
+  separate(tpep_pickup_datetime,c("pickup_date","pickup_time"),
+           sep = " ") %>% 
+  group_by(pickup_date) %>%
+  sample_frac(0.01,replace = F) %>% 
+  ungroup() %>%
+  separate(pickup_time,c("pickup_h","pickup_min","pickup_sec"),sep=":") %>%
+  dplyr::select(pickup_date,pickup_h,time,trip_distance,pickup_longitude,
+                pickup_latitude, dropoff_longitude,dropoff_latitude,
+                total_amount) %>%
+  mutate(pickup_month = substr(pickup_date,1,7))
+yellow_1602$pickup_h <- as.numeric(yellow_1602$pickup_h)
+yellow_1602_v2 <- yellow_1602 %>% 
+  mutate(time_interval = ifelse(pickup_h %in% 0:1.9,0,ifelse(
+    pickup_h %in% 2:3.9,2,ifelse(pickup_h %in% 4:5.9,4,ifelse(
+      pickup_h %in% 6:7.9,6,ifelse(pickup_h %in% 8:9.9,8,ifelse(
+        pickup_h %in% 10:11.9,10,ifelse(pickup_h %in% 12:13.9,12,ifelse(
+          pickup_h %in% 14:15.9,14,ifelse(pickup_h %in% 16:17.9,16,ifelse(
+            pickup_h %in% 18:19.9,18,ifelse(pickup_h %in% 20:21.9,20,22))))))))))))
+rm(yellow_1602)
+write.table(yellow_1602_v2,"yellow_1602_v2.csv",sep = ",",row.names = F)
+
+#16-04-yellow
+yellow_1604 <- fread("yellow_tripdata_2016-04.csv")
+yellow_1604 <- yellow_1604 %>% 
+  dplyr::select(tpep_pickup_datetime,tpep_dropoff_datetime,
+                trip_distance,pickup_longitude,pickup_latitude,
+                dropoff_longitude,dropoff_latitude,total_amount) %>%
+  mutate(time = as.numeric(as.POSIXct(strptime(tpep_dropoff_datetime,
+                                               "%Y-%m-%d %H:%M:%S"))-as.POSIXct(strptime(tpep_pickup_datetime,
+                                                                                         "%Y-%m-%d %H:%M:%S")))/60) %>% 
+  separate(tpep_pickup_datetime,c("pickup_date","pickup_time"),
+           sep = " ") %>% 
+  group_by(pickup_date) %>%
+  sample_frac(0.01,replace = F) %>% 
+  ungroup() %>%
+  separate(pickup_time,c("pickup_h","pickup_min","pickup_sec"),sep=":") %>%
+  dplyr::select(pickup_date,pickup_h,time,trip_distance,pickup_longitude,
+                pickup_latitude, dropoff_longitude,dropoff_latitude,
+                total_amount) %>%
+  mutate(pickup_month = substr(pickup_date,1,7))
+yellow_1604$pickup_h <- as.numeric(yellow_1604$pickup_h)
+yellow_1604_v2 <- yellow_1604 %>% 
+  mutate(time_interval = ifelse(pickup_h %in% 0:1.9,0,ifelse(
+    pickup_h %in% 2:3.9,2,ifelse(pickup_h %in% 4:5.9,4,ifelse(
+      pickup_h %in% 6:7.9,6,ifelse(pickup_h %in% 8:9.9,8,ifelse(
+        pickup_h %in% 10:11.9,10,ifelse(pickup_h %in% 12:13.9,12,ifelse(
+          pickup_h %in% 14:15.9,14,ifelse(pickup_h %in% 16:17.9,16,ifelse(
+            pickup_h %in% 18:19.9,18,ifelse(pickup_h %in% 20:21.9,20,22))))))))))))
+rm(yellow_1604)
+write.table(yellow_1604_v2,"yellow_1604_v2.csv",sep = ",",row.names = F)
+
+#16-06-yellow
+yellow_1606 <- fread("yellow_tripdata_2016-06.csv")
+yellow_1606 <- yellow_1606 %>% 
+  dplyr::select(tpep_pickup_datetime,tpep_dropoff_datetime,
+                trip_distance,pickup_longitude,pickup_latitude,
+                dropoff_longitude,dropoff_latitude,total_amount) %>%
+  mutate(time = as.numeric(as.POSIXct(strptime(tpep_dropoff_datetime,
+                                               "%Y-%m-%d %H:%M:%S"))-as.POSIXct(strptime(tpep_pickup_datetime,
+                                                                                         "%Y-%m-%d %H:%M:%S")))/60) %>% 
+  separate(tpep_pickup_datetime,c("pickup_date","pickup_time"),
+           sep = " ") %>% 
+  group_by(pickup_date) %>%
+  sample_frac(0.01,replace = F) %>% 
+  ungroup() %>%
+  separate(pickup_time,c("pickup_h","pickup_min","pickup_sec"),sep=":") %>%
+  dplyr::select(pickup_date,pickup_h,time,trip_distance,pickup_longitude,
+                pickup_latitude, dropoff_longitude,dropoff_latitude,
+                total_amount) %>%
+  mutate(pickup_month = substr(pickup_date,1,7))
+yellow_1606$pickup_h <- as.numeric(yellow_1606$pickup_h)
+yellow_1606_v2 <- yellow_1606 %>% 
+  mutate(time_interval = ifelse(pickup_h %in% 0:1.9,0,ifelse(
+    pickup_h %in% 2:3.9,2,ifelse(pickup_h %in% 4:5.9,4,ifelse(
+      pickup_h %in% 6:7.9,6,ifelse(pickup_h %in% 8:9.9,8,ifelse(
+        pickup_h %in% 10:11.9,10,ifelse(pickup_h %in% 12:13.9,12,ifelse(
+          pickup_h %in% 14:15.9,14,ifelse(pickup_h %in% 16:17.9,16,ifelse(
+            pickup_h %in% 18:19.9,18,ifelse(pickup_h %in% 20:21.9,20,22))))))))))))
+rm(yellow_1606)
+write.table(yellow_1606_v2,"yellow_1606_v2.csv",sep = ",",row.names = F)
+
+#16-06-yellow
+yellow_1606 <- fread("yellow_tripdata_2016-06.csv")
+yellow_1606 <- yellow_1606 %>% 
+  dplyr::select(tpep_pickup_datetime,tpep_dropoff_datetime,
+                trip_distance,pickup_longitude,pickup_latitude,
+                dropoff_longitude,dropoff_latitude,total_amount) %>%
+  mutate(time = as.numeric(as.POSIXct(strptime(tpep_dropoff_datetime,
+                                               "%Y-%m-%d %H:%M:%S"))-as.POSIXct(strptime(tpep_pickup_datetime,
+                                                                                         "%Y-%m-%d %H:%M:%S")))/60) %>% 
+  separate(tpep_pickup_datetime,c("pickup_date","pickup_time"),
+           sep = " ") %>% 
+  group_by(pickup_date) %>%
+  sample_frac(0.01,replace = F) %>% 
+  ungroup() %>%
+  separate(pickup_time,c("pickup_h","pickup_min","pickup_sec"),sep=":") %>%
+  dplyr::select(pickup_date,pickup_h,time,trip_distance,pickup_longitude,
+                pickup_latitude, dropoff_longitude,dropoff_latitude,
+                total_amount) %>%
+  mutate(pickup_month = substr(pickup_date,1,7))
+yellow_1606$pickup_h <- as.numeric(yellow_1606$pickup_h)
+yellow_1606_v2 <- yellow_1606 %>% 
+  mutate(time_interval = ifelse(pickup_h %in% 0:1.9,0,ifelse(
+    pickup_h %in% 2:3.9,2,ifelse(pickup_h %in% 4:5.9,4,ifelse(
+      pickup_h %in% 6:7.9,6,ifelse(pickup_h %in% 8:9.9,8,ifelse(
+        pickup_h %in% 10:11.9,10,ifelse(pickup_h %in% 12:13.9,12,ifelse(
+          pickup_h %in% 14:15.9,14,ifelse(pickup_h %in% 16:17.9,16,ifelse(
+            pickup_h %in% 18:19.9,18,ifelse(pickup_h %in% 20:21.9,20,22))))))))))))
+rm(yellow_1606)
+write.table(yellow_1606_v2,"yellow_1606_v2.csv",sep = ",",row.names = F)
+
+#16-01-yellow
+yellow_1601 <- fread("yellow_tripdata_2016-01.csv")
+yellow_1601 <- yellow_1601 %>% 
+  dplyr::select(tpep_pickup_datetime,tpep_dropoff_datetime,
+                trip_distance,pickup_longitude,pickup_latitude,
+                dropoff_longitude,dropoff_latitude,total_amount) %>%
+  mutate(time = as.numeric(as.POSIXct(strptime(tpep_dropoff_datetime,
+           "%Y-%m-%d %H:%M:%S"))-as.POSIXct(strptime(tpep_pickup_datetime,
+           "%Y-%m-%d %H:%M:%S")))/60) %>% 
+  separate(tpep_pickup_datetime,c("pickup_date","pickup_time"),
+           sep = " ") %>% 
+  group_by(pickup_date) %>%
+  sample_frac(0.01,replace = F) %>% 
+  ungroup() %>%
+  separate(pickup_time,c("pickup_h","pickup_min","pickup_sec"),sep=":") %>%
+  dplyr::select(pickup_date,pickup_h,time,trip_distance,pickup_longitude,
+                pickup_latitude, dropoff_longitude,dropoff_latitude,
+                total_amount) %>%
+  mutate(pickup_month = substr(pickup_date,1,7))
+yellow_1601$pickup_h <- as.numeric(yellow_1601$pickup_h)
+yellow_1601_v2 <- yellow_1601 %>% 
+  mutate(time_interval = ifelse(pickup_h %in% 0:1.9,0,ifelse(
+    pickup_h %in% 2:3.9,2,ifelse(pickup_h %in% 4:5.9,4,ifelse(
+      pickup_h %in% 6:7.9,6,ifelse(pickup_h %in% 8:9.9,8,ifelse(
+        pickup_h %in% 10:11.9,10,ifelse(pickup_h %in% 12:13.9,12,ifelse(
+          pickup_h %in% 14:15.9,14,ifelse(pickup_h %in% 16:17.9,16,ifelse(
+            pickup_h %in% 18:19.9,18,ifelse(pickup_h %in% 20:21.9,20,22))))))))))))
+rm(yellow_1601)
+write.table(yellow_1601_v2,"yellow_1601_v2.csv",sep = ",",row.names = F)
+
+#15-12-yellow
+yellow_1512 <- fread("yellow_tripdata_2015-12.csv")
+yellow_1512 <- yellow_1512 %>% 
+  dplyr::select(tpep_pickup_datetime,tpep_dropoff_datetime,
+                trip_distance,pickup_longitude,pickup_latitude,
+                dropoff_longitude,dropoff_latitude,total_amount) %>%
+  mutate(time = as.numeric(as.POSIXct(strptime(tpep_dropoff_datetime,
+        "%Y-%m-%d %H:%M:%S"))-as.POSIXct(strptime(tpep_pickup_datetime,
+        "%Y-%m-%d %H:%M:%S")))/60) %>% 
+  separate(tpep_pickup_datetime,c("pickup_date","pickup_time"),
+           sep = " ") %>% 
+  group_by(pickup_date) %>%
+  sample_frac(0.01,replace = F) %>% 
+  ungroup() %>%
+  separate(pickup_time,c("pickup_h","pickup_min","pickup_sec"),sep=":") %>%
+  dplyr::select(pickup_date,pickup_h,time,trip_distance,pickup_longitude,
+                pickup_latitude, dropoff_longitude,dropoff_latitude,
+                total_amount) %>%
+  mutate(pickup_month = substr(pickup_date,1,7))
+yellow_1512$pickup_h <- as.numeric(yellow_1512$pickup_h)
+yellow_1512_v2 <- yellow_1512 %>% 
+  mutate(time_interval = ifelse(pickup_h %in% 0:1.9,0,ifelse(
+    pickup_h %in% 2:3.9,2,ifelse(pickup_h %in% 4:5.9,4,ifelse(
+      pickup_h %in% 6:7.9,6,ifelse(pickup_h %in% 8:9.9,8,ifelse(
+        pickup_h %in% 10:11.9,10,ifelse(pickup_h %in% 12:13.9,12,ifelse(
+          pickup_h %in% 14:15.9,14,ifelse(pickup_h %in% 16:17.9,16,ifelse(
+            pickup_h %in% 18:19.9,18,ifelse(pickup_h %in% 20:21.9,20,22))))))))))))
+rm(yellow_1512)
+write.table(yellow_1512_v2,"yellow_1512_v2.csv",sep = ",",row.names = F)
+
+####################hahaah######################
+zone_coordinate <- fread("zone_coordinate.csv")
+zone_coordinate <- zone_coordinate %>% dplyr::select(lon,lat,location_id)
+
+Find_zone <- function(position)
+{
+  Calc_distance <- function(x)
+  {
+    return(sqrt((position[1] - x[1])^2 + (position[2] - x[2])^2))
+  }
+  distances <- apply(zone_coordinate,1,Calc_distance)
+  return(order(distances)[1])
+}
+
+yellow_2nd_half <- rbind(yellow_1512_v2,yellow_1601_v2,yellow_1602_v2,yellow_1603_v2,yellow_1604_v2,yellow_1605_v2,yellow_1606_v2)
+pickup.location <- cbind(yellow_2nd_half$pickup_longitude,yellow_2nd_half$pickup_latitude)
+dropoff.location <- cbind(yellow_2nd_half$dropoff_longitude,yellow_2nd_half$dropoff_latitude)
+a <- Sys.time()
+pickup_id <- apply(pickup.location,1,Find_zone)
+dropoff_id <- apply(dropoff.location,1,Find_zone)
+b <- Sys.time()
+print(b-a)
+yellow_2nd_half$pickup_id=pickup_id
+yellow_2nd_half$dropoff_id=dropoff_id
+zone_dic <- merge(id,zone_coordinate,by ="location_id") %>%
+  dplyr::select(location_id,zone,lon,lat) 
+pickup_dic <- zone_dic %>% rename(pickup_id = location_id,
+                                  pickup_zone = zone,
+                                  pickup_zone_lon = lon,
+                                  pickup_zone_lat = lat)
+dropoff_dic <- zone_dic %>% rename(dropoff_id = location_id,
+                                   dropoff_zone = zone,
+                                   dropoff_zone_lon = lon,
+                                   dropoff_zone_lat = lat)
+yellow_2nd_half_v2 <- merge(yellow_2nd_half,pickup_dic,by="pickup_id")
+yellow_2nd_half_v2 <- merge(yellow_2nd_half_v2,dropoff_dic,by="dropoff_id")
+yellow_1st_half_v2 <- fread("yellow_1st_half_v2.csv")
+yellow_1yr <- rbind(yellow_1st_half_v2,yellow_2nd_half_v2)
+count_table_yellow <- yellow_1yr %>% group_by(pickup_zone,dropoff_zone,time_interval) %>%
+                                     summarise(pickup_lon = mean(pickup_zone_lon),
+                                               pickup_lat = mean(pickup_zone_lat),
+                                               dropoff_lon = mean(dropoff_zone_lon),
+                                               dropoff_lat = mean(dropoff_zone_lat),
+                                               n = 10*n()) %>%
+                                     arrange(desc(n)) %>%
+                                     filter(n>= 100)
+count_table_green <- fread("count_table_green.csv")
+count_table_yellow$color <- "yellow" 
+count_table_green$color <- "green" 
+green_1yr <- fread("sampled_data_with_id_n_address.csv")
+green_1yr_r <- green_1yr %>% dplyr::select(dropoff_region,pickup_region,
+                           pickup_month,pickup_h,Pickup_longitude,
+                           Pickup_latitude,Dropoff_longitude,
+                           Dropoff_latitude,Trip_distance,Total_amount,
+                           time,time_interval) %>%
+                           rename(dropoff_id = dropoff_region,
+                                  pickup_id = pickup_region,
+                                  pickup_longitude = Pickup_longitude,
+                                  pickup_latitude = Pickup_latitude,
+                                  dropoff_longitude = Dropoff_longitude,
+                                  dropoff_latitude = Dropoff_latitude,
+                                  trip_distance = Trip_distance,
+                                  total_amount = Total_amount) %>%
+                           separate(time_interval,c("time_interval_1",
+                                  "time_interval_2"),sep = "-") %>%
+                           select(-time_interval_2) %>% 
+                           rename(time_interval = time_interval_1)
+green_1yr_r <- merge(green_1yr_r,pickup_dic,by="pickup_id")
+green_1yr_r <- merge(green_1yr_r,dropoff_dic,by="dropoff_id")
+green_1yr_r$color <- "green"
+yellow_1yr_r <- yellow_1yr %>% 
+                dplyr::select(-pickup_date) %>%
+                mutate(color = "yellow")
+green_1yr_r$time_interval <- as.numeric(substr(green_1yr_r$time_interval,1,1))
+green_1yr_r$pickup_month <- chartr("_","-",green_1yr_r$pickup_month)
+taxi_1yr_r <- rbind(yellow_1yr_r,green_1yr_r)
+taxi_1yr_r$weight <- ifelse(taxi_1yr_r$color=="green",1,10)
+count_table <- rbind(count_table_green,count_table_yellow)
+m <- leaflet() %>% setView(lng = -73.97396, lat =40.78870,zoom=12) 
+m <- m %>% addTiles( 'https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoiam9leXRoZWRvZyIsImEiOiJjaW41MW5mNmYwY2NrdXJra2g4bmR3Y3dhIn0.5DzFBRvdn_9OHFmDFYwFmw')
+m <- m %>% addCircles(lng=pickup.location[2,1],lat=pickup.location[2,2],radius=500,col="red")
+m <- m %>% addCircles(lng=zone_coordinate$lon[24],lat=zone_coordinate$lat[24],radius=500,col="black")
+m
+
+# bar plot data
+taxi_time_table <- taxi_1yr_r %>%
+                   group_by(pickup_month,color,time_interval) %>%
+                   summarise(n = n()*mean(weight))
+taxi_time_table$time_interval <- paste(as.numeric(taxi_time_table$time_interval),"-",as.numeric(taxi_time_table$time_interval)+2)
+taxi_time_table <- data.frame(taxi_time_table)              
+
+# bar plot
+bar_t <- function(x,y){
+  taxi_time_table$time_interval <- factor(taxi_time_table$time_interval,
+                                        levels = c("0 - 2","2 - 4","4 - 6","6 - 8","8 - 10","10 - 12","12 - 14","14 - 16","16 - 18",
+                                                    "18 - 20","20 - 22","22 - 24"))
+  taxi <- taxi_time_table %>% filter(color == x,pickup_month == y)
+  ggplot(data = taxi,aes(x = time_interval,y = n,fill = n)) +
+    scale_fill_gradient("Count", low = paste("light",x), high = x)+
+    geom_bar(stat="identity") +
+    theme(axis.text.x = element_text(size=6,face="bold",angle = 30, 
+                                     hjust=1),
+          theme(plot.title = element_text(size=16,face="bold")) +
+    ggtitle(paste(x,"taxi pickup numbers in",y)) + ylab("pickup numbers") +
+    xlab("Time interval")
+  
+} 
+bar_t("green","2015-09")
+
+#bubble plot data for pickup
+taxi_zone_table_pickup <- taxi_1yr_r %>% 
+                   group_by(pickup_zone,color,time_interval) %>%
+                   summarise(n = n()*mean(weight),
+                             pickup_zone_lon = mean(pickup_zone_lon),
+                             pickup_zone_lat = mean(pickup_zone_lat))
+taxi_zone_table_pickup$time_interval <- paste(as.numeric(taxi_zone_table_pickup$time_interval),"-",as.numeric(taxi_zone_table_pickup$time_interval)+2) 
+#bubble plot on map for pickup
+bubble_zone_pickup <- function(X,Y){
+ taxi <- taxi_zone_table_pickup %>% filter(color == X,time_interval == Y)
+ nycMap <- qmap("new york city", zoom = 10,legend = "topleft")
+ nycMap + geom_point(shape = 21,color = "black",
+              aes(x=pickup_zone_lon, y=pickup_zone_lat, size = n),alpha=0.5,
+              fill = X,data = taxi) + 
+   ggtitle(paste(X,"taxi pickups in NYC by location on",Y)) +        
+   theme(axis.text=element_blank(),axis.ticks=element_blank(),
+         axis.title=element_blank(),legend.position="right") +
+   theme(plot.title = element_text(size = rel(1.5),face="bold"),
+         legend.text=element_text(size=8)) 
+ 
+}
+bubble_zone_pickup(X = "green",Y = "6 - 8")
+
+#bubble plot data for dropoff
+taxi_zone_table_dropoff <- taxi_1yr_r %>% 
+  group_by(dropoff_zone,color,time_interval) %>%
+  summarise(n = n()*mean(weight),
+            dropoff_zone_lon = mean(dropoff_zone_lon),
+            dropoff_zone_lat = mean(dropoff_zone_lat))
+taxi_zone_table_dropoff$time_interval <- paste(as.numeric(taxi_zone_table_dropoff$time_interval),"-",as.numeric(taxi_zone_table_dropoff$time_interval)+2) 
+#bubble plot on map for dropoff
+bubble_zone_dropoff <- function(X,Y){
+  taxi <- taxi_zone_table_dropoff %>% filter(color == X,time_interval == Y)
+  nycMap <- qmap("new york city", zoom = 10,legend = "topleft")
+  nycMap + geom_point(shape = 21,color = "black",
+                      aes(x=dropoff_zone_lon, y=dropoff_zone_lat, size = n),alpha=0.5,
+                      fill = X,data = taxi) + 
+    ggtitle(paste(X,"taxi dropoffs in NYC by location on",Y)) +        
+    theme(axis.text=element_blank(),axis.ticks=element_blank(),
+          axis.title=element_blank(),legend.position="right") +
+    theme(plot.title = element_text(size = rel(1.5),face="bold"),
+          legend.text=element_text(size=8)) 
+  
+}
+bubble_zone_dropoff(X = "green",Y = "6 - 8")
+
+
+
+
