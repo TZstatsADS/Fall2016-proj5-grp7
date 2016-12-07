@@ -35,12 +35,15 @@
   We also removed some outliers and NAhs from the data to keep the dataset more applicable.
  
  **2nd Step: Clustering business zone**
+ 
  Inspired by the Uber data analysis in https://github.com/fivethirtyeight/uber-tlc-foil-response, we decided to cluster our data's coordinate into 263 centers(includes: Pelham Parkway", " Penn Station/Madison Sq West", "Port Richmond", "Prospect-Lefferts Gardens", "Prospect Heights", "Prospect Park", "Queens Village", "Queensboro Hill" , etc). This part's calculation is based on distance.
  
  **3rd Step: Creating the count table for spacial visualization purpose**
+ 
   The count table we use includes 9nvariables: pickup_zone"   "dropoff_zone", "time_interval", "pickup_lon", "pickup_lat",    "dropoff_lon", "dropoff_lat", "color" and "n"(represents the number of drive).
 
 **Data visualization: map with arrows**:
+
   We try to use arrows on NYC map to represent the flow of taxies, with the help of R leaflet. The arrows connect the pickup and dropoff locations and has different:
     1. Color: red shows yellow cabs, and green shows boro cabs
     2. Width: bigger arrow stands for heavier traffic
@@ -52,6 +55,7 @@ What we find interesting from this analysis is
 2: On specific time interval, we can see some flowing ouside in some places( for instance: 6 pm in time squares) and some    flowing inside ( weekend days afternoon in flushing)
 
 **Data visualizastion: network graph**:
+
   Though some zones have crazy pickup numbers, these rides actually within the zone itself and has poor connection with other business zones. What we focused on is actually the connection between zones and the interesting stories between these connections.
   To explore the connection between the zones, we built a network graph to show the relations within these business zones. 
   The different colors show the six different boroughs and the the sizes of the nodes grow as the connection numbers enlarge.
