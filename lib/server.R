@@ -27,7 +27,7 @@ shinyServer(function(input,output){
       filter(time_interval >= minhour() & time_interval <= maxhour())
     ride.counts.all$n <- as.numeric(ride.counts.all$n)
     ride.counts.all <- ride.counts.all %>%
-      group_by(pickup_lon, pickup_lat, dropoff_lon, dropoff_lat, color)%>%
+      group_by(pickup_zone,dropoff_zone,pickup_lon, pickup_lat, dropoff_lon, dropoff_lat, color)%>%
       summarise(n = sum(n)) %>% as.data.frame()
     ride.counts.filter.threshold <- ride.counts.all %>% top_n(topPopular())
    
