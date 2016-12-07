@@ -103,7 +103,7 @@ paint.arrows <- function(map, arrow.data){
     
     taxi.color <- ""
     if(arrow.data[i,5] == "yellow"){
-      taxi.color <- "orange"
+      taxi.color <- "brown"
     }
     else{
       taxi.color <- arrow.data[i,5]

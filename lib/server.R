@@ -7,17 +7,6 @@ library(plotly)
 shinyServer(function(input,output){
   
   ride.counts <- read_csv("count_table_total.csv")
-  # ride.counts.all <- ride.counts %>% 
-  #   dplyr::group_by(pickup_lon, pickup_lat, dropoff_lon, dropoff_lat, time_interval) %>%
-  #   dplyr::summarise(total.count = sum(n))
-  
-  # minthreshold <- eventReactive(input$button,{
-  #   minthreshold <- input$slider1[1]
-  # })
-  # 
-  # maxthreshold <- eventReactive(input$button,{
-  #   maxthreshold <- input$slider1[2]
-  # })
 
   topPopular <- eventReactive(input$button,{
     topPopular <- as.numeric(input$topPop)
@@ -77,86 +66,8 @@ shinyServer(function(input,output){
   # ride.counts.filter.threshold <- ride.counts.all %>%
   #   filter(total.count >= 5000) #%>% as.matrix()
   
-  get.arrowhead <- function(data.line){
-    
-    # Convert to numeric without names
-    data.line <- as.numeric(data.line)
-    
-    # Vector with direction of arrow.
-    dx <- data.line[3] - data.line[1]
-    dy <- data.line[4] - data.line[2]
-    
-    # normalize
-    length <- sqrt(dx * dx + dy * dy)
-    unitDx <- dx / length
-    unitDy <- dy / length
-    
-    # increase this to get a larger arrow head
-    arrowHeadBoxSize = 0.001
-    
-    # These are the coordinates to paint the arrow head (basically 2 lines)
-    x1 = (data.line[3] - unitDx * arrowHeadBoxSize - unitDy * arrowHeadBoxSize)
-    y1 = (data.line[4] - unitDy * arrowHeadBoxSize + unitDx * arrowHeadBoxSize)
-    x2 = (data.line[3] - unitDx * arrowHeadBoxSize + unitDy * arrowHeadBoxSize)
-    y2 = (data.line[4] - unitDy * arrowHeadBoxSize - unitDx * arrowHeadBoxSize)
-    
-    final.matrix <- matrix(c(x1, y1, data.line[3], data.line[4], 
-                             x2, y2, data.line[3], data.line[4]), 
-                           ncol = 4, byrow = TRUE)
-    return(final.matrix)
-  }
-  
-  
-  
-  paint.arrows <- function(map, arrow.data){
-    
-    #arrow.data <- as.matrix(arrow.data)
-    
-    for(i in 1:nrow(arrow.data)){
-      
-      # Get Data from row
-      lng.x = c(arrow.data[i,1], arrow.data[i,3])
-      lat.x = c(arrow.data[i,2], arrow.data[i,4])
-      weight.x = arrow.data[i,6]
-      maxweight = max(arrow.data[,6])
-      line.weight = as.numeric(weight.x / maxweight * 20)
-      
-      taxi.color <- ""
-      if(arrow.data[i,5] == "yellow"){
-        taxi.color <- "orange"
-      }
-      else{
-        taxi.color <- arrow.data[i,5]
-      }
-      
-      # Paint line
-      map <- addPolylines(map, lng = lng.x, lat = lat.x, weight = line.weight, color = taxi.color)
-      
-      #head(ride.counts.filter.threshold)    
-      ## Paint Arrow Heads
-      
-      # Get Data of arrow head
-      arrow.head <- get.arrowhead(arrow.data[i,1:4])
-      # Check if we had errors (possible because origin and destination are the same)
-      error.values <- sum(is.na(arrow.head))
-      
-      # If everything OK, we calculate and paint
-      if(error.values == 0){
-        lng.arrow.1 <- c(arrow.head[1,1], arrow.head[1,3])
-        lat.arrow.1 <- c(arrow.head[1,2], arrow.head[1,4])
-        lng.arrow.2 <- c(arrow.head[2,1], arrow.head[2,3])
-        lat.arrow.2 <- c(arrow.head[2,2], arrow.head[2,4])
-        
-        # Paint Arrow Head
-        map <- addPolylines(map, lng = lng.arrow.1, lat = lat.arrow.1, 
-                            weight = line.weight, color = taxi.color)    
-        map <- addPolylines(map, lng = lng.arrow.2, lat = lat.arrow.2, 
-                            weight = line.weight, color = taxi.color)        
-      }
-    }  
-    
-    return(map)
-  }
+
+  source("functions.R")
   
   n<-leaflet()%>%
     addTiles(urlTemplate = "https://api.mapbox.com/styles/v1/jackiecao/ciu0jcgy800ah2ipgpsw5usmi/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamFja2llY2FvIiwiYSI6ImNpdTBqYXhmcjAxZ24ycGp3ZWZ1bTJoZ3QifQ.VytIrn5ZxVjtZjM15JPA9Q",
