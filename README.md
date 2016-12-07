@@ -36,5 +36,9 @@
   We also removed some outliers and NAhs from the data to keep the dataset more applicable.
  
  **2nd Step: Clustering business zone**
+ Inspired by the Uber data analysis in https://github.com/fivethirtyeight/uber-tlc-foil-response, we decided to cluster our data's coordinate into 263 centers(includes: Pelham Parkway", " Penn Station/Madison Sq West", "Port Richmond", "Prospect-Lefferts Gardens", "Prospect Heights", "Prospect Park", "Queens Village", "Queensboro Hill" , etc). This part's calculation is based on distance.
+ 
+ **3rd Step: Creating the count table for spacial visualization purpose**
+
  
 ![screenshot](https://github.com/TZstatsADS/Fall2016-proj5-proj5-grp7-1/blob/master/figs/Screen%20Shot%202016-12-07%20at%2012.38.27%20PM.png)
