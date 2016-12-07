@@ -8,6 +8,8 @@ shinyServer(function(input,output,session){
   
   ride.counts <- read_csv("count_table_total.csv")
   
+  new_value <- reactiveValues()
+  
   topPopular <- eventReactive(input$button,{
     topPopular <- as.numeric(input$topPop)
   })
@@ -31,6 +33,11 @@ shinyServer(function(input,output,session){
       summarise(total.count = sum(n)) %>% as.data.frame()
     ride.counts.filter.threshold <- ride.counts.all %>% top_n(topPopular())
   })
+  
+  # ride.counts.filter.threshold <- eventReactive(input$clean,{
+  #   ride.counts.filter.threshold <- ride.counts %>% 
+  #     filter(time_interval <= 0)
+  # })
   
   source("functions.R")
   
