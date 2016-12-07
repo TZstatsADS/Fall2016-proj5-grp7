@@ -4,10 +4,10 @@ library(readr)
 library(dplyr)
 library(plotly)
 
-shinyServer(function(input,output){
+shinyServer(function(input,output,session){
   
   ride.counts <- read_csv("count_table_total.csv")
-
+  
   topPopular <- eventReactive(input$button,{
     topPopular <- as.numeric(input$topPop)
   })
@@ -28,73 +28,26 @@ shinyServer(function(input,output){
     ride.counts.all$n <- as.numeric(ride.counts.all$n)
     ride.counts.all <- ride.counts.all %>%
       group_by(pickup_zone,dropoff_zone,pickup_lon, pickup_lat, dropoff_lon, dropoff_lat, color)%>%
-      summarise(n = sum(n)) %>% as.data.frame()
+      summarise(total.count = sum(n)) %>% as.data.frame()
     ride.counts.filter.threshold <- ride.counts.all %>% top_n(topPopular())
-   
-  # ride.counts.all <- ride.counts %>%
-  #   filter(n >= minthreshold() & n < maxthreshold()) %>%
-  #   filter(time_interval >= minhour() & time_interval <= maxhour()) %>% as.data.frame()
-  # ride.counts.all$n <- as.numeric(ride.counts.all$n)
-  # ride.counts.filter.threshold <- ride.counts.all[,-c(1:3)]
-  
-  # ride.counts.filter.threshold[,6] <- as.integer(as.character(ride.counts.filter.threshold[,6]))
   })
   
-  # ride.counts.filter.threshold <- reactive({ride.counts.filter.threshold <- ride.counts.filter.threshold[ride.counts.filter.threshold$color %in% color_select(),]})
-                                          
-  
-  
-  # ride.counts.filter.threshold <- reactiveValues()
-  # ride.counts.filter.threshold$data <- as.matrix(ride.counts.all) 
-  # observe({
-  #   if(input$update){
-  #     minthreshold <- input$slider1[1]
-  #     maxthreshold <- input$slider1[2]
-  #     ride.counts.filter.threshold$data <- ride.counts.all %>% dplyr::filter(total.count >= minthreshold) %>% as.matrix()
-  #  }
-  # })
-  # ride.counts.filter.threshold <- eventReactive(
-  #   input$update,
-  #   {
-  #     minthreshold <- input$slider1[1]
-  #     maxthreshold <- input$slider1[2]
-  #     ride.counts.filter.threshold <- ride.counts.all %>%
-  #     dplyr::filter(total.count >= minthreshold) %>% as.matrix()
-  #     }, ignoreNULL = FALSE)
-  # print(isolate(ride.counts.filter.threshold()))
-  
-  # ride.counts.filter.threshold <- ride.counts.all %>%
-  #   filter(total.count >= 5000) #%>% as.matrix()
-  
-
   source("functions.R")
   
-  n<-leaflet()%>%
+  # output$map2 <- renderLeaflet({
+  #   leaflet()%>%
+  #     addTiles(urlTemplate = "https://api.mapbox.com/styles/v1/jackiecao/ciu0jcgy800ah2ipgpsw5usmi/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamFja2llY2FvIiwiYSI6ImNpdTBqYXhmcjAxZ24ycGp3ZWZ1bTJoZ3QifQ.VytIrn5ZxVjtZjM15JPA9Q",
+  #              attribution = 'Maps by <a href="http://www.mapbox.com/">Mapbox</a>'
+  #                )%>%
+  #                setView(lng = -73.97, lat = 40.75, zoom = 12)
+  # })
+  output$map3 <- renderLeaflet({
+  leaflet()%>%
     addTiles(urlTemplate = "https://api.mapbox.com/styles/v1/jackiecao/ciu0jcgy800ah2ipgpsw5usmi/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamFja2llY2FvIiwiYSI6ImNpdTBqYXhmcjAxZ24ycGp3ZWZ1bTJoZ3QifQ.VytIrn5ZxVjtZjM15JPA9Q",
              attribution = 'Maps by <a href="http://www.mapbox.com/">Mapbox</a>'
     )%>%
-    setView(lng = -73.97, lat = 40.75, zoom = 12)
-  
-  # n=paint.arrows(n, ride.counts.filter.threshold)
-  output$map2 <- renderLeaflet({
-    # n <- Leaflet$new()
-    # n$setView(c(40.75,-73.97),zoom = 13)
-    # n$tileLayer(provider='Stamen.TonerLite') 
-    #   addTiles(urlTemplate = "https://api.mapbox.com/styles/v1/jackiecao/ciu0jcgy800ah2ipgpsw5usmi/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamFja2llY2FvIiwiYSI6ImNpdTBqYXhmcjAxZ24ycGp3ZWZ1bTJoZ3QifQ.VytIrn5ZxVjtZjM15JPA9Q",
-    #            attribution = 'Maps by <a href="http://www.mapbox.com/">Mapbox</a>'
-    #   )%>%
-    #   setView(lng = -73.97, lat = 40.75, zoom = 13)
-    m <- ride.counts.filter.threshold()
-    map <- paint.arrows(n, m)
-    map
-    # output$map2 <- renderLeaflet({
-    # leaflet()%>%
-    #   addTiles(urlTemplate = "https://api.mapbox.com/styles/v1/jackiecao/ciu0jcgy800ah2ipgpsw5usmi/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamFja2llY2FvIiwiYSI6ImNpdTBqYXhmcjAxZ24ycGp3ZWZ1bTJoZ3QifQ.VytIrn5ZxVjtZjM15JPA9Q",
-    #            attribution = 'Maps by <a href="http://www.mapbox.com/">Mapbox</a>'
-    #   )%>%
-    #   # addProviderTiles("Stamen.Watercolor") %>%
-    #   setView(lng = -73.97, lat = 40.75, zoom = 13)
-  })
+    setView(lng = -73.97, lat = 40.75, zoom = 12) %>% 
+    paint.arrows(ride.counts.filter.threshold())})
   #########################################################################################################
   
   
@@ -131,7 +84,7 @@ shinyServer(function(input,output){
   output$taxi_time_table_plot <- renderPlotly({
     y <- input$table_month
     bar_plot <- bar_t(y)
-  
+    
   })
   
   
