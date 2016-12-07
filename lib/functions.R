@@ -115,8 +115,8 @@ paint.arrows <- function(map, arrow.data){
 
     # Generate curve
     
-    num_node <- 100
-    intensity <- 4
+    num_node <- 10
+    intensity <- 2
     curve.to.draw <- Get_curve(A = origin, B = dest, intensity, num_node)
     
     # Paint line, represented by each of the segments of the curve
