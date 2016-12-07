@@ -87,7 +87,18 @@ Get_curve <- function(A,B,intensity,num_node) {
   return(path)}
 }
 
-## This function paints the line segment. Calls the arrow head 
+addDestPopup <- function(map, arrow.data){
+  num.rows <- nrow(arrow.data)
+  for(i in 1:num.rows){
+    addPopups(lng = arrow.data$dropoff_lon[i], lat = arrow.data$dropoff_lat[i],
+              arrow.data$dropoff_zone[i],
+              options = popupOptions(closeButton = FALSE))
+  }
+  return(map)
+}
+
+
+## This function paints the line segment. Calls the arrow head and curves
 paint.arrows <- function(map, arrow.data){
 
   #arrow.data <- as.matrix(arrow.data)
@@ -95,23 +106,23 @@ paint.arrows <- function(map, arrow.data){
   for(i in 1:nrow(arrow.data)){
     
     # Get Data from row
-    lng.x = c(arrow.data[i,1], arrow.data[i,3])
-    lat.x = c(arrow.data[i,2], arrow.data[i,4])
-    weight.x = arrow.data[i,6]
-    maxweight = max(arrow.data[,6])
+    lng.x = c(arrow.data$pickup_lon[i], arrow.data$dropoff_lon[i])
+    lat.x = c(arrow.data$pickup_lat[i], arrow.data$dropoff_lat[i])
+    weight.x = arrow.data$total.count[i]
+    maxweight = max(arrow.data$total.count)
     line.weight = as.numeric(weight.x / maxweight * 20)
     
     taxi.color <- ""
-    if(arrow.data[i,5] == "yellow"){
+    if(arrow.data$color[i] == "yellow"){
       taxi.color <- "brown"
     }
     else{
-      taxi.color <- arrow.data[i,5]
+      taxi.color <- arrow.data$color[i]
     }
     
     # Prepare data to draw curve
-    origin <- c(arrow.data[i,1], arrow.data[i,2])
-    dest <- c(arrow.data[i,3], arrow.data[i,4])
+    origin <- c(arrow.data$pickup_lon[i], arrow.data$pickup_lat[i])
+    dest <- c(arrow.data$dropoff_lon[i], arrow.data$dropoff[i])
 
     # Generate curve
     
@@ -139,20 +150,25 @@ paint.arrows <- function(map, arrow.data){
     # Check if we had errors (possible because origin and destination are the same)
     error.values <- sum(is.na(arrow.head))
     
-    # If everything OK, we calculate and paint
+    # If everything OK, we calculate and paint arrow head
     if(error.values == 0){
       lng.arrow.1 <- c(arrow.head[1,1], arrow.head[1,3])
       lat.arrow.1 <- c(arrow.head[1,2], arrow.head[1,4])
       lng.arrow.2 <- c(arrow.head[2,1], arrow.head[2,3])
       lat.arrow.2 <- c(arrow.head[2,2], arrow.head[2,4])
       
-      # Paint Arrow Head
       map <- addPolylines(map, lng = lng.arrow.1, lat = lat.arrow.1, 
                           weight = line.weight, color = taxi.color)    
       map <- addPolylines(map, lng = lng.arrow.2, lat = lat.arrow.2, 
-                          weight = line.weight, color = taxi.color)        
+                          weight = line.weight, color = taxi.color)
+      
+
     }
+    # Add popup on destination
+    map <- addDestPopup(map, arrow.data)
   }  
   
   return(map)
 }
+
+

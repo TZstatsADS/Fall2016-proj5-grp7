@@ -43,7 +43,7 @@ Summarizing over the whole database
 ```{r}
 
 ride.counts.all <- ride.counts %>% 
-  dplyr::group_by(pickup_lon, pickup_lat, dropoff_lon, dropoff_lat, color) %>%
+  dplyr::group_by(pickup_zone, dropoff_zone, pickup_lon, pickup_lat, dropoff_lon, dropoff_lat, color) %>%
   dplyr::summarise(total.count = sum(n)) %>% as.data.frame()
 
 #ride.counts.all$total.count <- as.numeric(ride.counts.all$total.count)
@@ -51,7 +51,7 @@ ride.counts.all <- ride.counts %>%
 
 ride.counts.filter.threshold <- dplyr::filter(ride.counts.all, total.count >= 30000)
 
-ride.counts.filter.threshold[,6] <- as.integer(as.character(ride.counts.filter.threshold[,6]))
+ride.counts.filter.threshold[,8] <- as.integer(as.character(ride.counts.filter.threshold[,8]))
 
 dim(ride.counts.filter.threshold)
 ```
