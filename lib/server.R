@@ -28,9 +28,13 @@ shinyServer(function(input,output){
   maxhour <- eventReactive(input$button,{
     maxhour <- input$slider2[2]
   })
+  color_select <- eventReactive(input$button,{
+    color_select <- input$taxi_color
+  })
   
   ride.counts.filter.threshold <- eventReactive(input$button,{
     ride.counts.all <- ride.counts %>%
+      filter(color %in% color_select()) %>% 
       filter(time_interval >= minhour() & time_interval <= maxhour())
     ride.counts.all$n <- as.numeric(ride.counts.all$n)
     ride.counts.all <- ride.counts.all %>%
@@ -46,6 +50,9 @@ shinyServer(function(input,output){
   
   # ride.counts.filter.threshold[,6] <- as.integer(as.character(ride.counts.filter.threshold[,6]))
   })
+  
+  # ride.counts.filter.threshold <- reactive({ride.counts.filter.threshold <- ride.counts.filter.threshold[ride.counts.filter.threshold$color %in% color_select(),]})
+                                          
   
   
   # ride.counts.filter.threshold <- reactiveValues()

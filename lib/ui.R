@@ -26,8 +26,9 @@ body <- dashboardBody(
                               # sliderInput("slider1", label = h3("Threshold"), min = 1000, max = 4000, value = c(500, 4500), step = 100),
                               
                               selectInput("topPop", label = h3("Number of TOP Popular Locations"), as.numeric(topChoices),selected = 10),
-                              checkboxInput(inputId = "color_yellow",label = h3("Show Yellow Taxi"),value = FALSE),
-                              checkboxInput(inputId = "color_green",label = h3("Show Green Taxi"),value = TRUE),
+                              # checkboxInput(inputId = "color_yellow",label = h3("Show Yellow Taxi"),value = FALSE),
+                              # checkboxInput(inputId = "color_green",label = h3("Show Green Taxi"),value = TRUE),
+                              checkboxGroupInput("taxi_color", h3("Show"),choices = c("Yellow Taxi" = "yellow", "Green Taxi" = "green"),selected = c("yellow","green")),
                               actionButton("button", 'UPDATE', icon = shiny::icon('calendar'), style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
                 ))
             
