@@ -14,7 +14,6 @@
 
   NYC is one of the cities with both highest traffic volumn and highest business density. We are curious about how the business zones in NYC are connected with each other. To explore our thought, we built an R shiny app for the business intelligence purpose based on the NYC taxi data from 2015.7 ~2016.6. This app includes three parts: 1st part gives a map showing the direction of how taxi transfers within specific time interval and taxi types(green taxies or yellow taxies); 2nd part gives some EDA of the dataset we chose; and the last part shows the network of 263 business zones and the connections between the 6 borough in NYC.
 ![screenshot](https://github.com/TZstatsADS/Fall2016-proj5-proj5-grp7-1/blob/master/figs/How%20taxi%20networks%20NYC%20Screen%20Shot%20.png)
-![screenshot](https://github.com/TZstatsADS/Fall2016-proj5-proj5-grp7-1/blob/master/figs/Screen%20Shot2.png)
 
 
 **Contribution statement**:  
@@ -39,6 +38,18 @@
  Inspired by the Uber data analysis in https://github.com/fivethirtyeight/uber-tlc-foil-response, we decided to cluster our data's coordinate into 263 centers(includes: Pelham Parkway", " Penn Station/Madison Sq West", "Port Richmond", "Prospect-Lefferts Gardens", "Prospect Heights", "Prospect Park", "Queens Village", "Queensboro Hill" , etc). This part's calculation is based on distance.
  
  **3rd Step: Creating the count table for spacial visualization purpose**
+  The count table we use includes 9nvariables: pickup_zone"   "dropoff_zone", "time_interval", "pickup_lon", "pickup_lat",    "dropoff_lon", "dropoff_lat", "color" and "n"(represents the number of drive).
 
- 
+**Data visualization: map with arrows**:
+  We try to use arrows on NYC map to represent the flow of taxies, with the help of R leaflet. The arrows connect the pickup and dropoff locations and has different:
+    1. Color: red shows yellow cabs, and green shows boro cabs
+    2. Width: bigger arrow stands for heavier traffic
+    3. Curvature
+  In order to show roundtrips more clearly, we give curvature to our arrows. Each curve is made by splicing a number of polylines. 
+![screenshot](https://github.com/TZstatsADS/Fall2016-proj5-proj5-grp7-1/blob/master/figs/Screen%20Shot2.png)
+
+**Data visualizastion: network graph**:
+  Though some zones have crazy pickup numbers, these rides actually within the zone itself and has poor connection with other business zones.
+  To explore the connection between the zones, we built a network    
 ![screenshot](https://github.com/TZstatsADS/Fall2016-proj5-proj5-grp7-1/blob/master/figs/Screen%20Shot%202016-12-07%20at%2012.38.27%20PM.png)
+
