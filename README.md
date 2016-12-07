@@ -15,8 +15,8 @@
 + Kezhi focused on sampling the raw data and arrow drawing, 
 + Shujin developed the shiny app, 
 + Jaime focused on arrow drawing and app design, 
-+ Nianyao focused on sampling the raw data and generated network graphs, 
 + Zichen presented.
++ Nianyao focused on sampling the raw data and generated network graphs, 
 
 **Project summary**: 
 
