@@ -3,7 +3,7 @@
 Term: Fall 2016
 
 + Team Name:proj5 - grp 7
-+ Projec title: Lorem ipsum dolor sit amet
++ Projec title: How taxi networks NYC
 + Team members:Kezhi Cai
 +              Shujin Cao
 +	       Jaime Gacitua
@@ -16,6 +16,8 @@ Project summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
 
+![screenshot](https://github.com/TZstatsADS/Fall2016-proj5-proj5-grp7-1/blob/master/figs/How%20taxi%20networks%20NYC%20Screen%20Shot%20.png)
+![screenshot](https://github.com/TZstatsADS/Fall2016-proj5-proj5-grp7-1/blob/master/figs/Screen%20Shot2.png)
 ![screenshot](https://github.com/TZstatsADS/Fall2016-proj5-proj5-grp7-1/blob/master/figs/Screen%20Shot%202016-12-07%20at%2012.42.40%20PM.png)
 ![screenshot](https://github.com/TZstatsADS/Fall2016-proj5-proj5-grp7-1/blob/master/figs/Screen%20Shot%202016-12-07%20at%2012.44.14%20PM.png)
 
