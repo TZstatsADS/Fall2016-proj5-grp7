@@ -16,4 +16,7 @@ Project summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
 
-![screenshot](https://github.com/TZstatsADS/Fall2016-Proj2-grp12/blob/master/lib/Screen%20Shot%202016-10-12%20at%201.46.14%20PM.png)
+![screenshot](https://github.com/TZstatsADS/Fall2016-proj5-proj5-grp7-1/blob/master/figs/Screen%20Shot%202016-12-06%20at%2010.58.33%20PM.png)
+![screenshot](https://github.com/TZstatsADS/Fall2016-proj5-proj5-grp7-1/blob/master/figs/Screen%20Shot%202016-12-07%20at%2012.38.27%20PM.png)
+![screenshot](https://github.com/TZstatsADS/Fall2016-proj5-proj5-grp7-1/blob/master/figs/Screen%20Shot%202016-12-07%20at%2012.42.40%20PM.png)
+![screenshot](https://github.com/TZstatsADS/Fall2016-proj5-proj5-grp7-1/blob/master/figs/Screen%20Shot%202016-12-07%20at%2012.44.14%20PM.png)
