@@ -5,7 +5,7 @@
 + Team Name:proj5 - grp 7
 + Projec title: How taxi networks NYC
 + Team members:Kezhi Cai
-+              Shujin Cao
++             Shujin Cao
 +	             Jaime Gacitua
 +	             Zichen Wu
 +	             Nianyao Zuo
@@ -23,8 +23,9 @@
 
 **Data preparation**:
 
-  The dataset we use is from https://github.com/toddwschneider/nyc-taxi-data . The origin dataset contains about 30 GB data of yellow taxies and 3 GB data of green taxies(includes the pickup time & coordinates, dropoff time & coordinates,trip distance,fare related variables,etc), each from 2015.7 ~ 2016.6.
- **1st Step: Shrinking dataset** 
+  The dataset we use is from https://github.com/toddwschneider/nyc-taxi-data . The origin dataset contains about 30 GB data of yellow taxies and 3 GB data of green taxies( includes the pickup time & coordinates, dropoff time & coordinates,trip distance,fare related variables,etc), each from 2015.7 ~ 2016.6.
+
+**1st Step: Shrinking dataset** 
   Given the huge size of the dataset, we decided to use stratified sampling method to shrink the dataset: we grouped the data by date(total 366 days) and sampled 1% data for the yellow taxi per day and 10% data for the green taxi per day. To balance the gap of the portion, we added an allocation flag variable, weighted the yellow taxi to 10 and green taxi to 1. 
 
   To prove our sampling is reasonable, we did some eda work to exam the shrinked dataset.
@@ -36,7 +37,7 @@
  
  **2nd Step: Clustering business zone**
  
- Inspired by the Uber data analysis in https://github.com/fivethirtyeight/uber-tlc-foil-response, we decided to cluster our data's coordinate into 263 centers(includes: Pelham Parkway", " Penn Station/Madison Sq West", "Port Richmond", "Prospect-Lefferts Gardens", "Prospect Heights", "Prospect Park", "Queens Village", "Queensboro Hill" , etc). This part's calculation is based on distance.
+ Inspired by the Uber data analysis in https://github.com/fivethirtyeight/uber-tlc-foil-response, we decided to cluster our data's coordinate into 263 centers( includes: Pelham Parkway", " Penn Station/Madison Sq West", "Port Richmond", "Prospect-Lefferts Gardens", "Prospect Heights", "Prospect Park", "Queens Village", "Queensboro Hill" , etc). This part's calculation is based on distance.
  
  **3rd Step: Creating the count table for spacial visualization purpose**
  
