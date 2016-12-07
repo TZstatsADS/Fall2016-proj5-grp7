@@ -8,7 +8,7 @@ shinyServer(function(input,output,session){
   
   ride.counts <- read_csv("count_table_total.csv")
   
-  new_value <- reactiveValues()
+  new_value <- reactiveValues(data = NULL)
   
   topPopular <- eventReactive(input$button,{
     topPopular <- as.numeric(input$topPop)
@@ -23,9 +23,44 @@ shinyServer(function(input,output,session){
     color_select <- input$taxi_color
   })
   
+  # topPopular <- observeEvent(input$button,{
+  #   topPopular <- as.numeric(input$topPop)
+  # })
+  # minhour <- observeEvent(input$button,{
+  #   minhour <- input$slider2[1]
+  # })
+  # maxhour <- observeEvent(input$button,{
+  #   maxhour <- input$slider2[2]
+  # })
+  # color_select <- observeEvent(input$button,{
+  #   color_select <- input$taxi_color
+  # })
+  # 
+  # ride.counts.filter.threshold <- observeEvent(input$button,{
+  #   ride.counts.all <- ride.counts %>%
+  #     filter(color %in% color_select()) %>%
+  #     filter(time_interval >= minhour() & time_interval <= maxhour())
+  #   ride.counts.all$n <- as.numeric(ride.counts.all$n)
+  #   ride.counts.all <- ride.counts.all %>%
+  #     group_by(pickup_zone,dropoff_zone,pickup_lon, pickup_lat, dropoff_lon, dropoff_lat, color)%>%
+  #     summarise(total.count = sum(n)) %>% as.data.frame()
+  #   ride.counts.filter.threshold <- ride.counts.all %>% top_n(topPopular())
+  # })
+  
+  # ride.counts.filter.threshold <- eventReactive(input$button,{
+  #   ride.counts.all <- ride.counts %>%
+  #     filter(color %in% color_select()) %>%
+  #     filter(time_interval >= minhour() & time_interval <= maxhour())
+  #   ride.counts.all$n <- as.numeric(ride.counts.all$n)
+  #   ride.counts.all <- ride.counts.all %>%
+  #     group_by(pickup_zone,dropoff_zone,pickup_lon, pickup_lat, dropoff_lon, dropoff_lat, color)%>%
+  #     summarise(total.count = sum(n)) %>% as.data.frame()
+  #   ride.counts.filter.threshold <- ride.counts.all %>% top_n(topPopular())
+  # })
+  # 
   ride.counts.filter.threshold <- eventReactive(input$button,{
     ride.counts.all <- ride.counts %>%
-      filter(color %in% color_select()) %>% 
+      filter(color %in% color_select()) %>%
       filter(time_interval >= minhour() & time_interval <= maxhour())
     ride.counts.all$n <- as.numeric(ride.counts.all$n)
     ride.counts.all <- ride.counts.all %>%
