@@ -20,12 +20,13 @@ rm(list=ls(all=TRUE))
 
 
 ```{r}
-ride.counts <- read_csv("./data/count_table_total.csv")
+setwd("/Users/caikezhi/Desktop/Project5")
+ride.counts <- read_csv("count_table_total.csv")
 
 ```
 
 ## Trying a first map
-```{r, eval=FALSE, include=FALSE}
+```{r}
 m <- leaflet() %>%
   addTiles() %>%  # Add default OpenStreetMap map tiles
   addMarkers(lng=-73.84267, lat=40.86516, popup="New York") %>%
@@ -43,22 +44,21 @@ Summarizing over the whole database
 ```{r}
 
 ride.counts.all <- ride.counts %>% 
-  dplyr::group_by(pickup_zone, dropoff_zone, pickup_lon, pickup_lat, dropoff_lon, dropoff_lat, color) %>%
+  dplyr::group_by(pickup_lon, pickup_lat, dropoff_lon, dropoff_lat, color) %>%
   dplyr::summarise(total.count = sum(n)) %>% as.data.frame()
 
 #ride.counts.all$total.count <- as.numeric(ride.counts.all$total.count)
 
-
 ride.counts.filter.threshold <- dplyr::filter(ride.counts.all, total.count >= 30000)
 
-ride.counts.filter.threshold[,8] <- as.integer(as.character(ride.counts.filter.threshold[,8]))
+ride.counts.filter.threshold[,6] <- as.integer(as.character(ride.counts.filter.threshold[,6]))
 
 dim(ride.counts.filter.threshold)
 ```
 
 
 ```{r}
-source("./lib/functions.R")
+source("functions.R")
 ```
 
 
@@ -68,7 +68,43 @@ n <- leaflet() %>%
   addProviderTiles("CartoDB.Positron")
 
 n <- paint.arrows(n, ride.counts.filter.threshold)
+```
 
-n  # Print the map
+```{r}
+n <- leaflet() %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addProviderTiles("CartoDB.Positron")
+nn <- leaflet() %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addProviderTiles("CartoDB.Positron")
+
+zone_name <- "EWR"
+time_start <- 0
+time_end <- 8
+num_arrows <- 30
+inorout <- 1
+
+Draw_arrow_by_region <- function(zone_name,time_start,time_end,num_arrows,inorout){
+ride_counts_byzone <- ride.counts %>%
+  dplyr::group_by(pickup_zone,dropoff_zone,pickup_lon,pickup_lat,dropoff_lon,dropoff_lat,color,time_interval)%>%
+  dplyr::summarise(total.count = sum(n)) %>% as.data.frame()
+ride_counts_byzone <- dplyr::filter(ride_counts_byzone,time_interval>=time_start&time_interval<=time_end)
+
+if(inorout==0){
+    ride_counts_byzone <-dplyr::filter(ride_counts_byzone,dropoff_zone==zone_name)
+}else{ride_counts_byzone <-dplyr::filter(ride_counts_byzone,pickup_zone==zone_name)}
+
+ride_counts_byzone <- dplyr::select(ride_counts_byzone,pickup_lon,pickup_lat,dropoff_lon,dropoff_lat,color,total.count) %>%
+  arrange(desc(total.count))
+ride_counts_byzone <- ride_counts_byzone[1:num_arrows,]
+return(ride_counts_byzone)
+}
+arrows1 <- Draw_arrow_by_region(zone_name,time_start,time_end,num_arrows,0)
+arrows2 <- Draw_arrow_by_region(zone_name,time_start,time_end,num_arrows,1)
+
+n <- paint.arrows(n, arrows1)
+nn <- paint.arrows(nn, arrows2)
+n # Print the map
+nn
 ```
 
