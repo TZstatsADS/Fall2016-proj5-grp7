@@ -25,7 +25,7 @@ body <- dashboardBody(
                               sliderInput("slider2", label = h3("24-hour Range"), min = 0, max = 22, value = c(4, 6), step = 2),
                               # sliderInput("slider1", label = h3("Threshold"), min = 1000, max = 4000, value = c(500, 4500), step = 100),
                               
-                              selectInput("topPop", label = h3("Number of TOP Popular Locations"), as.numeric(topChoices),selected = 10),
+                              selectInput("topPop", label = h3("Number of TOP Popular Routes"), as.numeric(topChoices),selected = 10),
                               # checkboxInput(inputId = "color_yellow",label = h3("Show Yellow Taxi"),value = FALSE),
                               # checkboxInput(inputId = "color_green",label = h3("Show Green Taxi"),value = TRUE),
                               checkboxGroupInput("taxi_color", h3("Show"),choices = c("Yellow Taxi" = "yellow", "Green Taxi" = "green"),selected = c("yellow","green")),
