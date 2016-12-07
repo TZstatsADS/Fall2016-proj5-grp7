@@ -47,9 +47,15 @@
     3. Curvature
   In order to show roundtrips more clearly, we give curvature to our arrows. Each curve is made by splicing a number of polylines. 
 ![screenshot](https://github.com/TZstatsADS/Fall2016-proj5-proj5-grp7-1/blob/master/figs/Screen%20Shot2.png)
+What we find interesting from this analysis is 
+1: The population taking taxies tend to grow on summer night comparing to winter night.
+2: On specific time interval, we can see some flowing ouside in some places( for instance: 6 pm in time squares) and some    flowing inside ( weekend days afternoon in flushing)
 
 **Data visualizastion: network graph**:
-  Though some zones have crazy pickup numbers, these rides actually within the zone itself and has poor connection with other business zones.
-  To explore the connection between the zones, we built a network    
+  Though some zones have crazy pickup numbers, these rides actually within the zone itself and has poor connection with other business zones. What we focused on is actually the connection between zones and the interesting stories between these connections.
+  To explore the connection between the zones, we built a network graph to show the relations within these business zones. 
+  The different colors show the six different boroughs and the the sizes of the nodes grow as the connection numbers enlarge.
+  Moreover, the nodes close to the center have heavier traffic connection with others.
 ![screenshot](https://github.com/TZstatsADS/Fall2016-proj5-proj5-grp7-1/blob/master/figs/Screen%20Shot%202016-12-07%20at%2012.38.27%20PM.png)
 
+From the network gragh we can see within each borough the cnnection is quite close and the highest density is Manhattan.
