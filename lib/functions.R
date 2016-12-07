@@ -1,4 +1,5 @@
-
+library(htmlwidgets)
+library(htmltools)
 #####
 ## Arrow painting function ##
 #####
@@ -90,10 +91,19 @@ Get_curve <- function(A,B,intensity,num_node) {
 addDestPopup <- function(map, arrow.data){
   num.rows <- nrow(arrow.data)
   for(i in 1:num.rows){
-    addPopups(lng = arrow.data$dropoff_lon[i], lat = arrow.data$dropoff_lat[i],
-              arrow.data$dropoff_zone[i],
-              options = popupOptions(closeButton = FALSE))
-  }
+    
+    content <- paste(sep = "<br/>",
+                     "<b><a href='http://www.samurainoodle.com'>Samurai Noodle</a></b>",
+                     "606 5th Ave. S",
+                     "Seattle, WA 98138")
+    
+    addPopups(map = map, 
+              lng = arrow.data$dropoff_lon[i], 
+              lat = arrow.data$dropoff_lat[i],
+              popup = content)
+   # print(arrow.data$dropoff_zone[i])
+    }
+
   return(map)
 }
 
@@ -122,12 +132,13 @@ paint.arrows <- function(map, arrow.data){
     
     # Prepare data to draw curve
     origin <- c(arrow.data$pickup_lon[i], arrow.data$pickup_lat[i])
-    dest <- c(arrow.data$dropoff_lon[i], arrow.data$dropoff[i])
+    dest <- c(arrow.data$dropoff_lon[i], arrow.data$dropoff_lat[i])
 
     # Generate curve
     
     num_node <- 10
     intensity <- 2
+    
     curve.to.draw <- Get_curve(A = origin, B = dest, intensity, num_node)
     
     # Paint line, represented by each of the segments of the curve
@@ -136,7 +147,10 @@ paint.arrows <- function(map, arrow.data){
                           lng = curve.to.draw[,1], 
                           lat = curve.to.draw[,2], 
                           weight = line.weight, 
-                          color = taxi.color)      
+                          color = taxi.color,
+                          popup = paste0("From: <b>",
+                                         arrow.data$pickup_zone[i], "</b>",
+                                         "<BR>To: <b>", arrow.data$dropoff_zone[i], "</b>"))      
     
 
     
@@ -164,9 +178,12 @@ paint.arrows <- function(map, arrow.data){
       
 
     }
-    # Add popup on destination
-    map <- addDestPopup(map, arrow.data)
+  
+
   }  
+  
+  # Add popup on destinations
+  #map <- addDestPopup(map, arrow.data)
   
   return(map)
 }

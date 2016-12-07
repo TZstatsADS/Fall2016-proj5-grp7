@@ -25,7 +25,7 @@ ride.counts <- read_csv("./data/count_table_total.csv")
 ```
 
 ## Trying a first map
-```{r}
+```{r, eval=FALSE, include=FALSE}
 m <- leaflet() %>%
   addTiles() %>%  # Add default OpenStreetMap map tiles
   addMarkers(lng=-73.84267, lat=40.86516, popup="New York") %>%
