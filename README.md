@@ -55,7 +55,8 @@ NYC is one of the cities with both highest traffic volume and highest business d
     3. Curvature
   In order to show roundtrips more clearly, we gave curvature to our arrows. Each curve was made by splicing a number of polylines. 
 ![screenshot](https://github.com/TZstatsADS/Fall2016-proj5-proj5-grp7-1/blob/master/figs/Screen%20Shot2.png)
-What we find interesting from this analysis is 
+
+  What we find interesting from this analysis is 
 1: The population taking taxies tend to grow on summer night comparing to the winter night.
 2: On specific time interval, we can see some flowing outside in some places( for instance: 6 pm in time squares) and some    flowing inside ( weekend days afternoon in flushing)
 
