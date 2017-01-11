@@ -10,9 +10,10 @@
 	* Jaime Gacitua
 	* Zichen Wu
 	* Nianyao Zuo
++ Web url: http://clay.shinyapps.io/app0110
 
 **Contribution statement**:
-+ Kezhi focused on sampling the raw data and arrow drawing, 
++ Kezhi focused on sampling the raw data and arrow drawing, and uploaded the app,
 + Shujin developed the shiny app, 
 + Jaime focused on arrow drawing and app design, 
 + Zichen presented.
